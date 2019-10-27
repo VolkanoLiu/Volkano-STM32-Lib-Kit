@@ -20,6 +20,7 @@ void Set_RS_GPIO(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin);
 void SH1106_WR_Byte(uint8_t dat, uint8_t cmd);
 void SH1106_Init();
 void SH1106_Set_Pos(uint8_t x, uint8_t y);
+void draw8bit(uint8_t data, uint8_t page, uint8_t column);
 void test();
 
 // TODO functions
