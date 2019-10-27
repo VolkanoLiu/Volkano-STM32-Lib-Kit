@@ -102,6 +102,11 @@ void draw8bit(uint8_t data, uint8_t page, uint8_t column)
   SH1106_WR_Byte(column, OLED_DATA);
 }
 
+void drawPixel(uint8_t x, uint8_t y)
+{
+  draw8bit(0x01 << (y % 8), y / 8, x);
+}
+
 // 测试显示屏函数
 void test()
 {

@@ -21,10 +21,10 @@ void SH1106_WR_Byte(uint8_t dat, uint8_t cmd);
 void SH1106_Init();
 void SH1106_Set_Pos(uint8_t x, uint8_t y);
 void draw8bit(uint8_t data, uint8_t page, uint8_t column);
+void drawPixel(uint8_t x, uint8_t y);
 void test();
 
 // TODO functions
-void drawPixel(uint8_t x, uint8_t y);
 void printChar(uint8_t x, uint8_t y, char c);
 void printString_8x6(char* string, uint8_t string_length);
 
