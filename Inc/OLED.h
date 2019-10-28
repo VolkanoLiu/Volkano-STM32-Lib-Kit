@@ -1,6 +1,5 @@
 #ifndef __OLED_H
 #define __OLED_H
-#endif
 
 #include "stm32f4xx_hal.h"
 #include "ASCII.h"
@@ -20,14 +19,14 @@ void SH1106_Init();
 void SH1106_Set_Pos(uint8_t x, uint8_t y);
 void drawPixel(uint8_t x, uint8_t y);
 void setCursorPos_byte(uint8_t x, uint8_t y);
-void setCursorPos_char(uint8_t x, uint8_t y);
+void setCursorPos_charMode(uint8_t x, uint8_t y);
+void printChar_8x6_charMode(char c);
 void draw8bit(uint8_t data);
 
 void test();
 
 // TODO functions
 
-void printChar_8x6_char(char c);
 void printString_8x6_char(char *string, uint8_t string_length);
 
 //SH1106 functions END
@@ -47,3 +46,5 @@ cursorPos byteCursor;
 cursorPos charCursor; // Cursor position(x, y), x ranged from 0 to 20, y ranged from 0 to 7
 
 //SH1106 parameters END
+
+#endif

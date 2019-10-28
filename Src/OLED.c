@@ -108,7 +108,7 @@ void setCursorPos_byte(uint8_t x, uint8_t y)
   SH1106_WR_Byte(0x10 | (((x + 0x02) & (0xF0)) >> 4), OLED_CMD); //设置列高4位地址
 }
 
-void setCursorPos_char(uint8_t x, uint8_t y)
+void setCursorPos_charMode(uint8_t x, uint8_t y)
 {
   charCursor.x = x;
   charCursor.y = y;
@@ -120,11 +120,21 @@ void draw8bit(uint8_t data)
   SH1106_WR_Byte(data, OLED_DATA);
 }
 
-void printChar_8x6_char(char c)
+void printChar_8x6_charMode(char c)
 {
-  for(uint8_t col = 0; col < 6; col++)
-  {
-    SH1106_WR_Byte(ascii[c-'0'][col], OLED_DATA);
+  for (uint8_t col = 0; col < 6; col++) {
+    SH1106_WR_Byte(ascii_8x6[c - '0'][col], OLED_DATA);
+  }
+  if (charCursor.x == 20) {
+    charCursor.x = 0;
+    if (charCursor.y == 3) {
+      charCursor.y = 0;
+    } else {
+      charCursor.y++;
+    }
+    setCursorPos_charMode(0, charCursor.y);
+  } else {
+    charCursor.x++;
   }
 }
 
