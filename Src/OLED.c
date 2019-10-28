@@ -94,17 +94,38 @@ void test()
 }
 */
 
-void draw8bit(uint8_t data, uint8_t page, uint8_t column)
-{
-  SH1106_WR_Byte(0xb0 + page, OLED_CMD); //设置页地址（0~7）
-  SH1106_WR_Byte(0x02, OLED_CMD);        //设置显示位置—列低地址
-  SH1106_WR_Byte(0x10, OLED_CMD);        //设置显示位置—列高地址
-  SH1106_WR_Byte(column, OLED_DATA);
-}
+
 
 void drawPixel(uint8_t x, uint8_t y)
 {
-  draw8bit(0x01 << (y % 8), y / 8, x);
+  // todo
+}
+
+void setCursorPos_byte(uint8_t x, uint8_t y)
+{
+  SH1106_WR_Byte(0xb0 + y, OLED_CMD);                            //设置页地址（0~7）
+  SH1106_WR_Byte((x + 0x02) & (0x0F), OLED_CMD);                 //设置列低4位地址
+  SH1106_WR_Byte(0x10 | (((x + 0x02) & (0xF0)) >> 4), OLED_CMD); //设置列高4位地址
+}
+
+void setCursorPos_char(uint8_t x, uint8_t y)
+{
+  charCursor.x = x;
+  charCursor.y = y;
+  setCursorPos_byte(x * 6, y);
+}
+
+void draw8bit(uint8_t data)
+{
+  SH1106_WR_Byte(data, OLED_DATA);
+}
+
+void printChar_8x6_char(char c)
+{
+  for(uint8_t col = 0; col < 6; col++)
+  {
+    SH1106_WR_Byte(ascii[c-'0'][col], OLED_DATA);
+  }
 }
 
 // 测试显示屏函数
