@@ -123,11 +123,11 @@ void draw8bit(uint8_t data)
 void printChar_8x6_charMode(char c)
 {
   for (uint8_t col = 0; col < 6; col++) {
-    SH1106_WR_Byte(ascii_8x6[c - '0'][col], OLED_DATA);
+    SH1106_WR_Byte(ascii_8x6[c - ' '][col], OLED_DATA);
   }
   if (charCursor.x == 20) {
     charCursor.x = 0;
-    if (charCursor.y == 3) {
+    if (charCursor.y == 7) {
       charCursor.y = 0;
     } else {
       charCursor.y++;
@@ -147,6 +147,6 @@ void test()
     SH1106_WR_Byte(0x02, OLED_CMD);     //设置显示位置—列低地址
     SH1106_WR_Byte(0x10, OLED_CMD);     //设置显示位置—列高地址
     for (n = 0; n < 128; n++)
-      SH1106_WR_Byte(0xFF, OLED_DATA);
+      SH1106_WR_Byte(0x00, OLED_DATA);
   } //更新显示
 }

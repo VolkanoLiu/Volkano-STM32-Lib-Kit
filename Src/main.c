@@ -96,6 +96,7 @@ int main(void)
   Set_RS_GPIO(OLED_RST_GPIO_Port, OLED_RST_Pin);
   SH1106_Init();
   test();
+  setCursorPos_charMode(0, 0);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -105,6 +106,12 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    printChar_8x6_charMode('O');
+    printChar_8x6_charMode('o');
+    printChar_8x6_charMode('P');
+    printChar_8x6_charMode('p');
+    printChar_8x6_charMode('Q');
+    printChar_8x6_charMode('q');
   }
   /* USER CODE END 3 */
 }
