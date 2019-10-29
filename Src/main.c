@@ -96,7 +96,6 @@ int main(void)
   Set_RS_GPIO(OLED_RST_GPIO_Port, OLED_RST_Pin);
   SH1106_Init();
   test();
-  setCursorPos_charMode(0, 0);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -106,12 +105,6 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    printChar_8x6_charMode('O');
-    printChar_8x6_charMode('o');
-    printChar_8x6_charMode('P');
-    printChar_8x6_charMode('p');
-    printChar_8x6_charMode('Q');
-    printChar_8x6_charMode('q');
   }
   /* USER CODE END 3 */
 }
@@ -181,7 +174,7 @@ static void MX_SPI1_Init(void)
   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_256;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;

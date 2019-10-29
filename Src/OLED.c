@@ -1,5 +1,7 @@
 #include "OLED.h"
 
+#ifndef OLED_USE_DMA
+
 // 通过SPI发送指令
 void SH1106_SPI_trans(SPI_HandleTypeDef *hspi, uint8_t data)
 {
@@ -79,23 +81,6 @@ void SH1106_Set_Pos(uint8_t x, uint8_t y)
   SH1106_WR_Byte((x & 0x0f) | 0x01, OLED_CMD);
 }
 
-/*
-void test()
-{
-	uint8_t x = 0, y = 0;
-	for(x = 0; x < 128; x++)
-	{
-		for(y = 0; y < 64; y++);
-		{
-			SH1106_Set_Pos(x, y);
-			SH1106_WR_Byte(0xff, OLED_DATA);
-		}
-	}
-}
-*/
-
-
-
 void drawPixel(uint8_t x, uint8_t y)
 {
   // todo
@@ -149,4 +134,12 @@ void test()
     for (n = 0; n < 128; n++)
       SH1106_WR_Byte(0x00, OLED_DATA);
   } //更新显示
+  setCursorPos_charMode(0, 0);
+  for (int k = 0; k < 95; k++) {
+    printChar_8x6_charMode(k + ' ');
+  }
 }
+
+#else  /* OLED_USE_DMA */
+
+#endif /* OLED_USE_DMA */

@@ -4,6 +4,7 @@
 #include "stm32f4xx_hal.h"
 #include "ASCII.h"
 
+#ifndef OLED_USE_DMA
 // SH1106 defines BEGIN
 #define OLED_CMD 0
 #define OLED_DATA 1
@@ -47,4 +48,8 @@ cursorPos charCursor; // Cursor position(x, y), x ranged from 0 to 20, y ranged 
 
 //SH1106 parameters END
 
-#endif
+#else  /* OLED_USE_DMA */
+
+#endif /* OLED_USE_DMA */
+
+#endif /* __OLED_H */
