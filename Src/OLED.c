@@ -141,5 +141,9 @@ void test()
 }
 
 #else  /* OLED_USE_DMA */
+void SetDMAHandle(DMA_HandleTypeDef hdma)
+{
+  OLED_dma = hdma;
+}
 
 #endif /* OLED_USE_DMA */

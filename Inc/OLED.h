@@ -4,6 +4,8 @@
 #include "stm32f4xx_hal.h"
 #include "ASCII.h"
 
+#define OLED_USE_DMA
+
 #ifndef OLED_USE_DMA
 // SH1106 defines BEGIN
 #define OLED_CMD 0
@@ -49,6 +51,31 @@ cursorPos charCursor; // Cursor position(x, y), x ranged from 0 to 20, y ranged 
 //SH1106 parameters END
 
 #else  /* OLED_USE_DMA */
+
+// SH1106 defines BEGIN
+#define OLED_CMD 0
+#define OLED_DATA 1
+
+#define GRAM_START_ADDR   (0x20000000)
+#define GRAM_END_ADDR     (0x20000000)|0x400
+//SH1106 defines END
+
+//SH1106 functions BEGIN
+
+void SetDMAHandle(DMA_HandleTypeDef hdma);
+void OLED_SPI_Transmit_DMA(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size, uint8_t cmd);
+void SH1106_Init();
+void flushScreen();
+void drawPixel(uint8_t x, uint8_t y);
+
+//SH1106 functions END
+
+//SH1106 parameters BEGIN
+
+
+DMA_HandleTypeDef OLED_dma;
+
+//SH1106 parameters END
 
 #endif /* OLED_USE_DMA */
 
