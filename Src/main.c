@@ -89,8 +89,8 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_SPI1_Init();
   MX_DMA_Init();
+  MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
 
   // #ifndef OLED_USE_DMA
@@ -114,7 +114,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    HAL_SPI_Transmit_DMA(&hspi1, GRAM_START_ADDR, 1);
+    HAL_SPI_Transmit_DMA(&hspi1, addr, 8);
   }
   /* USER CODE END 3 */
 }
