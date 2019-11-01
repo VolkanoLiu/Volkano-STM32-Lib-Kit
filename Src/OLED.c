@@ -163,13 +163,13 @@ void Set_RS_GPIO(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin)
 
 void OLED_SPI_Transmit_DMA(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size, uint8_t cmd)
 {
-  HAL_GPIO_WritePin(RS_GPIO, RS_GPIO_Pin, cmd);
+  HAL_GPIO_WritePin(DC_GPIO, DC_GPIO_Pin, cmd);
   HAL_SPI_Transmit_DMA(hspi, pData, Size);
 }
 
 void SH1106_WR_Byte(uint8_t dat, uint8_t cmd)
 {
-  OLED_SPI_Transmit_DMA(hspi_addr, dat, 1, cmd);
+  OLED_SPI_Transmit_DMA(hspi_addr, &dat, 1, cmd);
 }
 
 void SH1106_Init()
@@ -207,6 +207,17 @@ void SH1106_Init()
   SH1106_WR_Byte(0xA4, OLED_CMD); // Disable Entire Display On (0xa4/0xa5)
   SH1106_WR_Byte(0xA6, OLED_CMD); // Disable Inverse Display On (0xa6/a7)
   SH1106_WR_Byte(0xAF, OLED_CMD); //--turn on oled panel
+}
+
+void flushScreen()
+{
+  for (uint8_t page = 0; page < 8; page++) {
+    SH1106_WR_Byte(0xb0 + page, OLED_CMD); //设置页地址（0~7）
+    SH1106_WR_Byte(0x02, OLED_CMD);        //设置显示位置—列低地址
+    SH1106_WR_Byte(0x10, OLED_CMD);        //设置显示位置—列高地址
+    OLED_SPI_Transmit_DMA(hspi_addr, &GRAM[0 + 128 * page], 128, OLED_DATA);
+    HAL_Delay(1);
+  }
 }
 
 #endif /* OLED_USE_DMA */

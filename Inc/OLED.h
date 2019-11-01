@@ -56,9 +56,7 @@ cursorPos charCursor; // Cursor position(x, y), x ranged from 0 to 20, y ranged 
 #define OLED_CMD 0
 #define OLED_DATA 1
 
-#define GRAM_START_ADDR   (0x20000000)
-#define GRAM_END_ADDR     (0x20000000)|0x400
-static uint8_t addr[128*8] = {1, 2, 3, 4, 5, 6, 7, 8};
+static volatile uint8_t GRAM[1024] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1, 2, 3, 4, 5,};
 //SH1106 defines END
 
 //SH1106 functions BEGIN
