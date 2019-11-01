@@ -33,6 +33,7 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "OLED.h"
+#include "taskmanage.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

@@ -59,6 +59,9 @@ void SystemClock_Config(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+// 定义前台任务队列
+taskList_Typedef foregroundTaskList;
+
 /* USER CODE END 0 */
 
 /**
@@ -94,6 +97,8 @@ int main(void)
   MX_SPI1_Init();
   MX_TIM6_Init();
   /* USER CODE BEGIN 2 */
+
+  taskListInit(&htim6, &foregroundTaskList, foregroundTaskManager);
 
   // #ifndef OLED_USE_DMA
   /*

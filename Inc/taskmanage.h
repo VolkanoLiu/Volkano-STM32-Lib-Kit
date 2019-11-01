@@ -17,10 +17,18 @@ typedef struct {
   taskElement_Typedef* TAIL;
   uint32_t taskAmount;
   void (*taskManager)(void);
+  TIM_HandleTypeDef* _htim;
 } taskList_Typedef;
 
 void taskListInit(TIM_HandleTypeDef *htim, taskList_Typedef *taskList, void (*t)(void));
-void taskManagerForeground();
-void taskManagerBackground();
+
+void foregroundTaskInit(taskElement_Typedef *task, taskList_Typedef *taskList, uint32_t period, void (*callback)(void));
+void backgroundTaskInit(taskElement_Typedef *task, taskList_Typedef *taskList, uint32_t period, void (*callback)(void));
+
+void taskSetConfig(taskElement_Typedef *task, uint32_t period, void (*callback)(void));
+void addTask(taskElement_Typedef *task, taskList_Typedef *taskList);
+
+void foregroundTaskManager(taskList_Typedef *taskList);
+void backgroundTaskManager(taskList_Typedef *taskList);
 
 #endif

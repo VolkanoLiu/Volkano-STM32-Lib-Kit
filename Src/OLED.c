@@ -142,6 +142,8 @@ void test()
 
 #else  /* OLED_USE_DMA */
 
+#include "main.h"
+
 void SetSPIHandle(SPI_HandleTypeDef *hspi)
 {
   hspi_addr = hspi;
