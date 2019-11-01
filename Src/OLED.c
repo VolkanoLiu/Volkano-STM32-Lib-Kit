@@ -213,12 +213,26 @@ void SH1106_Init()
 
 void flushScreen()
 {
+  /*
   for (uint8_t page = 0; page < 8; page++) {
     SH1106_WR_Byte(0xb0 + page, OLED_CMD); //设置页地址（0~7）
     SH1106_WR_Byte(0x02, OLED_CMD);        //设置显示位置—列低地址
     SH1106_WR_Byte(0x10, OLED_CMD);        //设置显示位置—列高地址
     OLED_SPI_Transmit_DMA(hspi_addr, &GRAM[0 + 128 * page], 128, OLED_DATA);
     HAL_Delay(1);
+  }
+  */
+
+  static uint8_t FLUSH_PARTITION_CHOOSE = 0;
+  static uint8_t CURRENT_PAGE = 0;
+  if (!FLUSH_PARTITION_CHOOSE) {
+    SH1106_WR_Byte(0xb0 + CURRENT_PAGE, OLED_CMD); //设置页地址（0~7）
+    SH1106_WR_Byte(0x02, OLED_CMD);                //设置显示位置—列低地址
+    SH1106_WR_Byte(0x10, OLED_CMD);                //设置显示位置—列高地址
+    FLUSH_PARTITION_CHOOSE = ~FLUSH_PARTITION_CHOOSE;
+  } else {
+    OLED_SPI_Transmit_DMA(hspi_addr, &GRAM[0 + 128 * CURRENT_PAGE], 128, OLED_DATA);
+    CURRENT_PAGE == 7 ? CURRENT_PAGE = 0 : CURRENT_PAGE++;
   }
 }
 

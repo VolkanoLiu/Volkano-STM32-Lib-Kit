@@ -100,21 +100,25 @@ int main(void)
 
   taskListInit(&htim6, &foregroundTaskList, foregroundTaskManager);
 
-  // #ifndef OLED_USE_DMA
-  /*
+  #ifndef OLED_USE_DMA
+  
   SetSPIHandle(&hspi1);
   Set_DC_GPIO(OLED_DC_GPIO_Port, OLED_DC_Pin);
   Set_RS_GPIO(OLED_RST_GPIO_Port, OLED_RST_Pin);
   SH1106_Init();
   test();
-  */
+  
+  #endif
 
-  // #ifdef OLED_USE_DMA
+  #ifdef OLED_USE_DMA
   SetSPIHandle(&hspi1);
   Set_DC_GPIO(OLED_DC_GPIO_Port, OLED_DC_Pin);
   Set_RS_GPIO(OLED_RST_GPIO_Port, OLED_RST_Pin);
   SH1106_Init();
-  flushScreen();
+  taskElement_Typedef flushScreen_Task;
+  foregroundTaskInit(&flushScreen_Task, &foregroundTaskList, 2, flushScreen);
+  
+  #endif
   
   /* USER CODE END 2 */
 
