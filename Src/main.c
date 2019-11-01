@@ -61,6 +61,7 @@ void SystemClock_Config(void);
 
 // 定义前台任务队列
 taskList_Typedef foregroundTaskList;
+taskList_Typedef backgroundTaskList;
 
 /* USER CODE END 0 */
 
@@ -99,6 +100,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   taskListInit(&htim6, &foregroundTaskList, foregroundTaskManager);
+  taskListInit(&htim6, &backgroundTaskList, backgroundTaskManager);
 
   #ifndef OLED_USE_DMA
   
@@ -116,7 +118,8 @@ int main(void)
   Set_RS_GPIO(OLED_RST_GPIO_Port, OLED_RST_Pin);
   SH1106_Init();
   taskElement_Typedef flushScreen_Task;
-  foregroundTaskInit(&flushScreen_Task, &foregroundTaskList, 2, flushScreen);
+  backgroundTaskInit(&flushScreen_Task, &backgroundTaskList, 20, flushScreen);
+  HAL_TIM_Base_Start_IT(&htim6);
   
   #endif
   
@@ -129,6 +132,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    backgroundTaskManager(&backgroundTaskList);
   }
   /* USER CODE END 3 */
 }
@@ -176,6 +180,13 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  if (htim->Instance == TIM6) {
+    foregroundTaskManager(&foregroundTaskList);
+  }
+}
 
 /* USER CODE END 4 */
 

@@ -1,6 +1,8 @@
 #include "taskmanage.h"
 #include "main.h"
 
+volatile uint8_t interrupt_flag = 0;
+
 /**
   * @brief 初始化一个任务队列
   * @param htim 定时器句柄
@@ -65,6 +67,20 @@ void addTask(taskElement_Typedef *task, taskList_Typedef *taskList)
 
 void foregroundTaskManager(taskList_Typedef *taskList)
 {
+  interrupt_flag = 1;
+  tick(&taskList);
+}
+
+void backgroundTaskManager(taskList_Typedef *taskList)
+{
+  if (interrupt_flag) {
+    interrupt_flag = 0;
+    tick(&taskList);
+  }
+}
+
+void tick(taskList_Typedef *taskList)
+{
   taskElement_Typedef *current_taskElement = taskList->HEAD;
   while (current_taskElement != NULL) {
     current_taskElement->count++;
@@ -78,19 +94,3 @@ void foregroundTaskManager(taskList_Typedef *taskList)
   }
 }
 
-void backgroundTaskManager(taskList_Typedef *taskList)
-{
-  // todo
-}
-
-// 重写 HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-// 在其他文件中重写
-/*
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-{
-  if(htim = SOME_TIMER)
-  {
-
-  }
-}
-*/
