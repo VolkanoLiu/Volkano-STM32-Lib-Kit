@@ -22,6 +22,7 @@
 #include "main.h"
 #include "dma.h"
 #include "spi.h"
+#include "tim.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -91,6 +92,7 @@ int main(void)
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_SPI1_Init();
+  MX_TIM6_Init();
   /* USER CODE BEGIN 2 */
 
   // #ifndef OLED_USE_DMA
@@ -103,7 +105,11 @@ int main(void)
   */
 
   // #ifdef OLED_USE_DMA
-
+  SetSPIHandle(&hspi1);
+  Set_DC_GPIO(OLED_DC_GPIO_Port, OLED_DC_Pin);
+  Set_RS_GPIO(OLED_RST_GPIO_Port, OLED_RST_Pin);
+  SH1106_Init();
+  flushScreen();
   
   /* USER CODE END 2 */
 
@@ -114,7 +120,6 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    HAL_SPI_Transmit_DMA(&hspi1, addr, 8);
   }
   /* USER CODE END 3 */
 }
