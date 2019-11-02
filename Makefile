@@ -59,6 +59,7 @@ Src/stm32f4xx_hal_msp.c \
 Src/OLED.c \
 Src/ASCII.c \
 Src/taskmanage.c \
+Src/keypress_process.c \
 Src/gpio.c \
 Src/dma.c \
 Src/spi.c \
