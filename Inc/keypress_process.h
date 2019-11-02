@@ -1,0 +1,40 @@
+#ifndef __KEYPRESS_PROCESS_H
+#define __KEYPRESS_PROCESS_H
+
+#include "stm32f4xx_hal.h"
+
+// 按键状态枚举
+typedef enum {
+  NORMAL = 0,
+  PRE_ACTIVE,
+  PRE_HIT,
+  PRE_LONGPRESS,
+  SINGLE_HIT,
+  DOUBLE_HIT,
+  LONGPRESS
+} KeyState_Typedef;
+
+//按键结构体
+struct FSMKey
+{
+  // 按键GPIO配置(矩阵键盘需进行部分魔改)
+  GPIO_TypeDef *GPIOx;
+  uint16_t GPIO_Pin;
+  uint8_t polarity; // 仅低四位有效
+  KeyState_Typedef state;// 按键状态
+
+  void(*SingleHit_callback)(void);
+  void(*DoubleHit_callback)(void);
+
+  uint16_t counter;                 //用于处理双击和长按的计数器
+  struct FSMKey *next;       //链表结构，指向下一个按键的索引
+};
+
+typedef struct FSMKey FSMKey_Typedef;
+
+void keyInit();
+void keyScan();
+void keyScanAll();
+
+
+#endif
