@@ -34,6 +34,7 @@ extern "C" {
 /* USER CODE BEGIN Includes */
 #include "OLED.h"
 #include "taskmanage.h"
+#include "stdio.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -59,10 +60,26 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define COL1_Pin GPIO_PIN_3
+#define COL1_GPIO_Port GPIOE
+#define COL3_Pin GPIO_PIN_4
+#define COL3_GPIO_Port GPIOE
+#define COL2_Pin GPIO_PIN_5
+#define COL2_GPIO_Port GPIOE
+#define ROW0_Pin GPIO_PIN_1
+#define ROW0_GPIO_Port GPIOF
+#define ROW1_Pin GPIO_PIN_3
+#define ROW1_GPIO_Port GPIOF
+#define ROW2_Pin GPIO_PIN_5
+#define ROW2_GPIO_Port GPIOF
+#define ROW3_Pin GPIO_PIN_7
+#define ROW3_GPIO_Port GPIOF
 #define OLED_DC_Pin GPIO_PIN_8
 #define OLED_DC_GPIO_Port GPIOD
 #define OLED_RST_Pin GPIO_PIN_9
 #define OLED_RST_GPIO_Port GPIOD
+#define COL0_Pin GPIO_PIN_1
+#define COL0_GPIO_Port GPIOE
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

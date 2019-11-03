@@ -226,14 +226,16 @@ void flushScreen()
   }
 }
 
-void drawChar(char c)
+void drawChar(char* c)
 {
   for (uint8_t x = 0; x < 6; x++) {
-    GRAM[128 * char_pos.y + 6 * char_pos.x + x] = ascii_8x6[c - ' '][x];
+    GRAM[128 * char_pos.y + 6 * char_pos.x + x] = ascii_8x6[*c - ' '][x];
   }
   if (char_pos.x == 20) {
     char_pos.x = 0;
     char_pos.y = char_pos.y == 7 ? 0 : char_pos.y + 1;
+  } else {
+    char_pos.x++;
   }
 }
 
@@ -242,11 +244,32 @@ void drawString(char *s)
   char_pos.x = 0;
   char_pos.y = 0;
   char* current_char = s;
-  while(&current_char!='\0')
+  while(*current_char!='\0')
   {
-    drawChar(&current_char);
+    drawChar(current_char);
     current_char++;
   }
+}
+
+void clearScreen()
+{
+  for(uint16_t col = 0; col < 1024; col++)
+  {
+    GRAM[col] = 0;
+  }
+}
+
+void set_clearScreen_flag()
+{
+  clearScreen_flag = 1;
+}
+void reset_clearScreen_flag()
+{
+  clearScreen_flag = 0;
+}
+uint8_t get_clearScreen_flag()
+{
+  return clearScreen_flag;
 }
 
 #endif /* OLED_USE_DMA */

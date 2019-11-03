@@ -1,4 +1,5 @@
 #include "taskmanage.h"
+#include "matrix_key.h"
 #include "main.h"
 
 volatile uint8_t interrupt_flag = 0;
@@ -68,19 +69,6 @@ void addTask(taskElement_Typedef *task, taskList_Typedef *taskList)
 void foregroundTaskManager(taskList_Typedef *taskList)
 {
   interrupt_flag = 1;
-  tick(&taskList);
-}
-
-void backgroundTaskManager(taskList_Typedef *taskList)
-{
-  if (interrupt_flag) {
-    interrupt_flag = 0;
-    tick(&taskList);
-  }
-}
-
-void tick(taskList_Typedef *taskList)
-{
   taskElement_Typedef *current_taskElement = taskList->HEAD;
   while (current_taskElement != NULL) {
     current_taskElement->count++;
@@ -94,3 +82,25 @@ void tick(taskList_Typedef *taskList)
   }
 }
 
+void backgroundTaskManager(taskList_Typedef *taskList)
+{
+  if (interrupt_flag) {
+    interrupt_flag = 0;
+    taskElement_Typedef *current_taskElement = taskList->HEAD;
+    while (current_taskElement != NULL) {
+      current_taskElement->count++;
+      if (current_taskElement->count == current_taskElement->period) {
+        if (current_taskElement->callback != NULL) {
+          current_taskElement->callback();
+        }
+        current_taskElement->count = 0;
+      }
+      current_taskElement = current_taskElement->next;
+    }
+  }
+  if (get_clearScreen_flag()) {
+    clearScreen();
+    reset_clearScreen_flag();
+    drawString(getStr());
+  }
+}

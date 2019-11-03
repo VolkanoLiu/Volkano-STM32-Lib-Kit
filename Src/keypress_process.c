@@ -41,7 +41,7 @@ void keyFlashBuffer(FSMKey_Typedef *key, uint8_t voltage)
 
 void keyScan(FSMKey_Typedef *key)
 {
-  keyFlashBuffer(key, HAL_GPIO_ReadPin(key->GPIO_Pin, key->GPIOx));
+  keyFlashBuffer(key, HAL_GPIO_ReadPin(key->GPIOx, key->GPIO_Pin));
   uint8_t press_flag = 0 , release_flag = 0;
   press_flag = (key->buffer & 0x0F) == key_event_press ? 1 : 0;
   release_flag = (key->buffer & 0x0F) == key_event_release ? 1 : 0;

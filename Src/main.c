@@ -23,11 +23,13 @@
 #include "dma.h"
 #include "spi.h"
 #include "tim.h"
+#include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "OLED.h"
+#include "matrix_key.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -63,6 +65,10 @@ void SystemClock_Config(void);
 taskList_Typedef foregroundTaskList;
 taskList_Typedef backgroundTaskList;
 
+FSMKey_Typedef key[4][4];
+
+static void (*SingleHit_callback[4][4])(void);
+static void (*DoubleHit_callback[4][4])(void);
 /* USER CODE END 0 */
 
 /**
@@ -73,6 +79,12 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 
+  FSMKey_Typedef key[4][4];
+
+  GPIO_struct_Typedef row[4];
+  GPIO_struct_Typedef col[4];
+
+  firstTest(SingleHit_callback, DoubleHit_callback, row, col);
   /* USER CODE END 1 */
   
 
@@ -97,8 +109,12 @@ int main(void)
   MX_DMA_Init();
   MX_SPI1_Init();
   MX_TIM6_Init();
+  MX_USART1_Init();
   /* USER CODE BEGIN 2 */
-
+  // uint8_t a = 0;
+  // HAL_GPIO_WritePin(ROW0_GPIO_Port, ROW0_Pin, GPIO_PIN_SET);
+  // a = HAL_GPIO_ReadPin(COL0_GPIO_Port, COL0_Pin);
+  // HAL_GPIO_WritePin(ROW0_GPIO_Port, ROW0_Pin, GPIO_PIN_RESET);
   taskListInit(&htim6, &foregroundTaskList, foregroundTaskManager);
   taskListInit(&htim6, &backgroundTaskList, backgroundTaskManager);
 
@@ -117,10 +133,16 @@ int main(void)
   Set_DC_GPIO(OLED_DC_GPIO_Port, OLED_DC_Pin);
   Set_RS_GPIO(OLED_RST_GPIO_Port, OLED_RST_Pin);
   SH1106_Init();
+
+  matrixInit(&matrix_key, key, SingleHit_callback, DoubleHit_callback, row, col);
+
   taskElement_Typedef flushScreen_Task;
+  taskElement_Typedef scanMatrix_Task;
   backgroundTaskInit(&flushScreen_Task, &backgroundTaskList, 20, flushScreen);
+  foregroundTaskInit(&scanMatrix_Task, &foregroundTaskList, 10, scanMatrix);
   HAL_TIM_Base_Stop_IT(&htim6);
   HAL_TIM_Base_Start_IT(&htim6);
+  drawString("Hello World of the STM32!");
   
   #endif
   
