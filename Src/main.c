@@ -84,7 +84,7 @@ int main(void)
   GPIO_struct_Typedef row[4];
   GPIO_struct_Typedef col[4];
 
-  firstTest(SingleHit_callback, DoubleHit_callback, row, col);
+  
   /* USER CODE END 1 */
   
 
@@ -134,11 +134,12 @@ int main(void)
   Set_RS_GPIO(OLED_RST_GPIO_Port, OLED_RST_Pin);
   SH1106_Init();
 
+  firstTest(SingleHit_callback, DoubleHit_callback, row, col);
   matrixInit(&matrix_key, key, SingleHit_callback, DoubleHit_callback, row, col);
-
+  
   taskElement_Typedef flushScreen_Task;
   taskElement_Typedef scanMatrix_Task;
-  backgroundTaskInit(&flushScreen_Task, &backgroundTaskList, 20, flushScreen);
+  backgroundTaskInit(&flushScreen_Task, &backgroundTaskList, 100, flushScreen);
   foregroundTaskInit(&scanMatrix_Task, &foregroundTaskList, 10, scanMatrix);
   HAL_TIM_Base_Stop_IT(&htim6);
   HAL_TIM_Base_Start_IT(&htim6);

@@ -118,7 +118,7 @@ void keyScan(FSMKey_Typedef *key)
 
   case LONGPRESS:
     //长按状态下，每0.5s执行一次单击回调函数，循环执行
-    if (release_flag) {
+    if (release_flag||key->buffer==0) {
       key->state = NORMAL;
       key->counter = 0;
       break;

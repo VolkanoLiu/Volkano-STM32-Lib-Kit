@@ -1,5 +1,6 @@
 #include "matrix_key.h"
 #include "main.h"
+#include "usart.h"
 
 void matrixInit(matrix_key_Typedef *matrix,
     FSMKey_Typedef key[4][4],
@@ -102,7 +103,9 @@ void print0(){
   addChar('0');
 }
 void yes(){
-  printf("%s", str);
+  char LF[3] = "\r\n";
+  HAL_USART_Transmit(&husart1, &LF, 3, 100);
+  HAL_USART_Transmit(&husart1, str, string_tail, 100);
   set_clearScreen_flag();
 }
 void no(){
