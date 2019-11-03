@@ -138,4 +138,11 @@ void keyScan(FSMKey_Typedef *key)
   }
 }
 
-void keyScanAll(KeyGroup_Typedef *keyGroup);
+void keyScanAll(KeyGroup_Typedef *keyGroup)
+{
+  FSMKey_Typedef* current_key = keyGroup->HEAD;
+  while(current_key != NULL) {
+    keyScan(current_key);
+    current_key = current_key->next;
+  }
+}

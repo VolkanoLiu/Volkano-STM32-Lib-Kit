@@ -119,6 +119,7 @@ int main(void)
   SH1106_Init();
   taskElement_Typedef flushScreen_Task;
   backgroundTaskInit(&flushScreen_Task, &backgroundTaskList, 20, flushScreen);
+  HAL_TIM_Base_Stop_IT(&htim6);
   HAL_TIM_Base_Start_IT(&htim6);
   
   #endif

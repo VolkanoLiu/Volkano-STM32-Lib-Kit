@@ -13,8 +13,8 @@
  * TODO
  */
 
-const uint8_t key_event_press = 0b0011;
-const uint8_t key_event_release = 0b1100;
+static const uint8_t key_event_press = 0b0011;
+static const uint8_t key_event_release = 0b1100;
 
 // 按键状态枚举
 typedef enum {

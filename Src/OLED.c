@@ -226,4 +226,27 @@ void flushScreen()
   }
 }
 
+void drawChar(char c)
+{
+  for (uint8_t x = 0; x < 6; x++) {
+    GRAM[128 * char_pos.y + 6 * char_pos.x + x] = ascii_8x6[c - ' '][x];
+  }
+  if (char_pos.x == 20) {
+    char_pos.x = 0;
+    char_pos.y = char_pos.y == 7 ? 0 : char_pos.y + 1;
+  }
+}
+
+void drawString(char *s)
+{
+  char_pos.x = 0;
+  char_pos.y = 0;
+  char* current_char = s;
+  while(&current_char!='\0')
+  {
+    drawChar(&current_char);
+    current_char++;
+  }
+}
+
 #endif /* OLED_USE_DMA */
