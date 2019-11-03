@@ -1,6 +1,16 @@
 #include "keypress_process.h"
 #include "main.h"
 
+/**
+  * @brief 初始化按键
+  * @param keyGroup             按键组
+  * @param key                  按键
+  * @param GPIOx                GPIOx
+  * @param GPIO_Pin             GPIO_Pin
+  * @param singleHit_callback   单击的回调函数
+  * @param doubleHit_callback   双击的回调函数
+  * @param polarity             按键极性(0: 上拉, 1:下拉)
+  */
 void keyInit(KeyGroup_Typedef *keyGroup,
     FSMKey_Typedef *key,
     GPIO_TypeDef *GPIOx,
@@ -28,17 +38,30 @@ void keyInit(KeyGroup_Typedef *keyGroup,
   key->next = NULL;
 }
 
+/**
+  * @brief 初始化按键组
+  * @param keyGroup 按键组
+  */
 void keyGroupInit(KeyGroup_Typedef *keyGroup)
 {
   keyGroup->HEAD = NULL;
   keyGroup->TAIL = NULL;
 }
 
+/**
+  * @brief 更新按键缓存
+  * @param key 按键
+  * @param voltage 按键电压采样
+  */
 void keyFlashBuffer(FSMKey_Typedef *key, uint8_t voltage)
 {
   key->buffer = (key->buffer << 1) | (voltage ^ key->polarity);
 }
 
+/**
+  * @brief 扫描按键，并通过状态机执行函数
+  * @param key 按键
+  */
 void keyScan(FSMKey_Typedef *key)
 {
   keyFlashBuffer(key, HAL_GPIO_ReadPin(key->GPIOx, key->GPIO_Pin));

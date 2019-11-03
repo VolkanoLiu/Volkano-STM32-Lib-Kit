@@ -27,7 +27,7 @@ typedef enum {
   LONGPRESS
 } KeyState_Typedef;
 
-//按键结构体
+// 按键结构体
 struct FSMKey
 {
   // 按键GPIO配置(矩阵键盘需进行部分魔改)
@@ -39,17 +39,19 @@ struct FSMKey
 
   uint8_t buffer;         // 仅低四位有效
   KeyState_Typedef state; // 按键状态
-  uint16_t counter;       //用于处理双击和长按的计数器
-  struct FSMKey *next;    //链表结构，指向下一个按键的索引
+  uint16_t counter;       // 用于处理双击和长按的计数器
+  struct FSMKey *next;    // 链表结构，指向下一个按键的索引
 };
 
 typedef struct FSMKey FSMKey_Typedef;
 
+// 按键组结构体
 typedef struct {
   FSMKey_Typedef *HEAD;
   FSMKey_Typedef *TAIL;
 }KeyGroup_Typedef;
 
+// 初始化一个按键并将其加入按键组
 void keyInit(KeyGroup_Typedef *keyGroup,
     FSMKey_Typedef *key,
     GPIO_TypeDef *GPIOx,
@@ -58,9 +60,13 @@ void keyInit(KeyGroup_Typedef *keyGroup,
     void (*DoubleHit_callback)(void),
     uint8_t polarity);
 
+// 初始化按键组
 void keyGroupInit(KeyGroup_Typedef *keyGroup);
 
+// 更新按键缓存
 void keyFlashBuffer(FSMKey_Typedef *key, uint8_t voltage);
+
+// 扫描按键状态
 void keyScan(FSMKey_Typedef *key);
 void keyScanAll(KeyGroup_Typedef *keyGroup);
 
