@@ -63,9 +63,6 @@ void keyInit(KeyGroup_Typedef *keyGroup,
 // 初始化按键组
 void keyGroupInit(KeyGroup_Typedef *keyGroup);
 
-// 更新按键缓存
-void keyFlashBuffer(FSMKey_Typedef *key, uint8_t voltage);
-
 // 扫描按键状态
 void keyScan(FSMKey_Typedef *key);
 void keyScanAll(KeyGroup_Typedef *keyGroup);
