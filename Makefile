@@ -61,6 +61,7 @@ Src/ASCII.c \
 Src/taskmanage.c \
 Src/keypress_process.c \
 Src/matrix_key.c \
+Src/mem_sync.c \
 Src/gpio.c \
 Src/dma.c \
 Src/spi.c \

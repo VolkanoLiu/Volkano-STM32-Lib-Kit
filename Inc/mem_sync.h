@@ -24,18 +24,40 @@ typedef enum {
   RX
 } direction_Typedef;
 
+typedef enum {
+  FREE = 0,
+  TX_READY,
+  RX_READY,
+  TX_START,
+  TX_BUSY,
+  RX_BUSY,
+  TX_FINISH,
+  RX_FINISH
+} transfState_Typedef;
+
 typedef struct {
   protocol_Typedef protocol;
   direction_Typedef direction;
   uint32_t mem_addr;
   uint32_t data_length;
   uint32_t sync_period;
+  transfState_Typedef transfState;
 } memSyncTask_Typedef;
 
 void memSyncTaskInit(memSyncTask_Typedef *memSyncTask,
+    protocol_Typedef protocol,
     direction_Typedef direction,
     uint32_t mem_addr,
     uint32_t data_length,
     uint32_t sync_period);
+
+// TX functions
+static uint8_t ready_to_send_signal[2] = {0b11001100, 0b11110011};
+
+void sync_mem_TX(memSyncTask_Typedef *memSyncTask);
+
+// void send_data(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size);
+
+SPI_HandleTypeDef *m_hspi_addr;
 
 #endif
