@@ -53,11 +53,16 @@ void memSyncTaskInit(memSyncTask_Typedef *memSyncTask,
 
 // TX functions
 static uint8_t ready_to_send_signal[2] = {0b11001100, 0b11110011};
-
 void sync_mem_TX(memSyncTask_Typedef *memSyncTask);
+
+// RX functions
+
+void sync_mem_RX(memSyncTask_Typedef *memSyncTask);
 
 // void send_data(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size);
 
 SPI_HandleTypeDef *m_hspi_addr;
+
+void set_SPI_Handle(SPI_HandleTypeDef *_addr);
 
 #endif

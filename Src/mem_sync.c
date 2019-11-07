@@ -47,3 +47,7 @@ void sync_mem_TX(memSyncTask_Typedef *memSyncTask)
   }
 }
 
+void set_SPI_Handle(SPI_HandleTypeDef *_addr)
+{
+  m_hspi_addr = _addr;
+}

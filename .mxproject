@@ -1,7 +1,7 @@
 [PreviousGenFiles]
-HeaderPath=/home/volkano/Desktop/SPI_Display/Inc
+HeaderPath=/home/volkano/Desktop/Volkano-STM32-Lib-Kit/Inc
 HeaderFiles=stm32f4xx_it.h;stm32f4xx_hal_conf.h;main.h;gpio.h;dma.h;spi.h;sys.h;tim.h;usart.h;
-SourcePath=/home/volkano/Desktop/SPI_Display/Src
+SourcePath=/home/volkano/Desktop/Volkano-STM32-Lib-Kit/Src
 SourceFiles=stm32f4xx_it.c;stm32f4xx_hal_msp.c;main.c;gpio.c;dma.c;spi.c;sys.c;tim.c;usart.c;
 
 [PreviousLibFiles]

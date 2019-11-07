@@ -209,6 +209,9 @@ void SH1106_Init()
   SH1106_WR_Byte(0xA4, OLED_CMD); // Disable Entire Display On (0xa4/0xa5)
   SH1106_WR_Byte(0xA6, OLED_CMD); // Disable Inverse Display On (0xa6/a7)
   SH1106_WR_Byte(0xAF, OLED_CMD); //--turn on oled panel
+
+  clearScreen();
+  setCharCursor(0,0);
 }
 
   static uint8_t FLUSH_PARTITION_CHOOSE = 0;
@@ -239,10 +242,24 @@ void drawChar(char* c)
   }
 }
 
+void setCharCursor(uint8_t x, uint8_t y)
+{
+  char_pos.x = x;
+  char_pos.y = y;
+}
+
+void print_uint8_t(uint8_t *num)
+{
+  char num2str[4];
+  num2str[0] = *num / 100 + '0';
+  num2str[1] = (*num - (num2str[0] - '0') * 100) / 10 + '0';
+  num2str[2] = *num - (num2str[0] - '0') * 100 - (num2str[1] - '0') * 10 + '0';
+  num2str[3] = '\0';
+  drawString(num2str);
+}
+
 void drawString(char *s)
 {
-  char_pos.x = 0;
-  char_pos.y = 0;
   char* current_char = s;
   while(*current_char!='\0')
   {

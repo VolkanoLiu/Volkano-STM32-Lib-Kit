@@ -65,10 +65,10 @@ void SystemClock_Config(void);
 taskList_Typedef foregroundTaskList;
 taskList_Typedef backgroundTaskList;
 
-FSMKey_Typedef key[4][4];
+// FSMKey_Typedef key[4][4];
 
-static void (*SingleHit_callback[4][4])(void);
-static void (*DoubleHit_callback[4][4])(void);
+// static void (*SingleHit_callback[4][4])(void);
+// static void (*DoubleHit_callback[4][4])(void);
 /* USER CODE END 0 */
 
 /**
@@ -79,10 +79,10 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 
-  FSMKey_Typedef key[4][4];
+  // FSMKey_Typedef key[4][4];
 
-  GPIO_struct_Typedef row[4];
-  GPIO_struct_Typedef col[4];
+  // GPIO_struct_Typedef row[4];
+  // GPIO_struct_Typedef col[4];
 
   
   /* USER CODE END 1 */
@@ -105,11 +105,12 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-  MX_GPIO_Init();
   MX_DMA_Init();
   MX_SPI1_Init();
   MX_TIM6_Init();
   MX_USART1_Init();
+  MX_SPI2_Init();
+  MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
   // uint8_t a = 0;
   // HAL_GPIO_WritePin(ROW0_GPIO_Port, ROW0_Pin, GPIO_PIN_SET);
@@ -134,16 +135,16 @@ int main(void)
   Set_RS_GPIO(OLED_RST_GPIO_Port, OLED_RST_Pin);
   SH1106_Init();
 
-  firstTest(SingleHit_callback, DoubleHit_callback, row, col);
-  matrixInit(&matrix_key, key, SingleHit_callback, DoubleHit_callback, row, col);
+  // firstTest(SingleHit_callback, DoubleHit_callback, row, col);
+  // matrixInit(&matrix_key, key, SingleHit_callback, DoubleHit_callback, row, col);
   
   taskElement_Typedef flushScreen_Task;
-  taskElement_Typedef scanMatrix_Task;
+  // taskElement_Typedef scanMatrix_Task;
   backgroundTaskInit(&flushScreen_Task, &backgroundTaskList, 100, flushScreen);
-  foregroundTaskInit(&scanMatrix_Task, &foregroundTaskList, 10, scanMatrix);
-  HAL_TIM_Base_Stop_IT(&htim6);
+  // foregroundTaskInit(&scanMatrix_Task, &foregroundTaskList, 10, scanMatrix);
+  // HAL_TIM_Base_Stop_IT(&htim6);
   HAL_TIM_Base_Start_IT(&htim6);
-  drawString("Hello World of the STM32!");
+  drawString("SPI RX Test");
   
   #endif
   
@@ -205,11 +206,39 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 
+// callback functions
+
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   if (htim->Instance == TIM6) {
     foregroundTaskManager(&foregroundTaskList);
   }
+}
+
+uint8_t buffer;
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+  if(GPIO_Pin == SPI2_CS1_Pin && HAL_GPIO_ReadPin(SPI2_CS1_GPIO_Port, SPI2_CS1_Pin) == 0) {
+    HAL_SPI_Receive_DMA(&hspi2, &buffer, 1);
+    clearScreen();
+    char s[] = "success!";
+    char t[] = "RX: ";
+    setCharCursor(0, 0);
+    drawString(s);
+    setCharCursor(0, 1);
+    drawString(t);
+    print_uint8_t(&buffer);
+    // HAL_SPI_Receive_IT(&hspi2, &buffer, 1);
+    __HAL_GPIO_EXTI_CLEAR_IT(GPIO_Pin);
+  }
+}
+
+void HAL_SPI_RxCpltCallback (SPI_HandleTypeDef * hspi)
+{
+  // if(hspi == &hspi2) {
+  //     HAL_SPI_Receive_IT(&hspi2, &buffer, 1);
+  // }
 }
 
 /* USER CODE END 4 */

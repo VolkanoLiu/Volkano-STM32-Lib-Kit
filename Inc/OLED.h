@@ -72,6 +72,8 @@ void SH1106_Init();
 void flushScreen();
 void drawPixel(uint8_t x, uint8_t y);
 void drawChar(char* c);
+void setCharCursor(uint8_t x, uint8_t y);
+void print_uint8_t(uint8_t *num);
 void drawString(char *s);
 void clearScreen();
 void set_clearScreen_flag();
