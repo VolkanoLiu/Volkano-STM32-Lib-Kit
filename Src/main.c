@@ -107,10 +107,11 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_DMA_Init();
   MX_SPI1_Init();
-  MX_TIM6_Init();
-  MX_USART1_Init();
   MX_SPI2_Init();
+  MX_USART1_Init();
   MX_GPIO_Init();
+  MX_TIM6_Init();
+  
   /* USER CODE BEGIN 2 */
   // uint8_t a = 0;
   // HAL_GPIO_WritePin(ROW0_GPIO_Port, ROW0_Pin, GPIO_PIN_SET);
@@ -140,7 +141,7 @@ int main(void)
   
   taskElement_Typedef flushScreen_Task;
   // taskElement_Typedef scanMatrix_Task;
-  backgroundTaskInit(&flushScreen_Task, &backgroundTaskList, 100, flushScreen);
+  backgroundTaskInit(&flushScreen_Task, &backgroundTaskList, 10, flushScreen);
   // foregroundTaskInit(&scanMatrix_Task, &foregroundTaskList, 10, scanMatrix);
   // HAL_TIM_Base_Stop_IT(&htim6);
   HAL_TIM_Base_Start_IT(&htim6);
@@ -222,13 +223,40 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
   if(GPIO_Pin == SPI2_CS1_Pin && HAL_GPIO_ReadPin(SPI2_CS1_GPIO_Port, SPI2_CS1_Pin) == 0) {
     HAL_SPI_Receive_DMA(&hspi2, &buffer, 1);
     clearScreen();
-    char s[] = "success!";
-    char t[] = "RX: ";
     setCharCursor(0, 0);
-    drawString(s);
-    setCharCursor(0, 1);
-    drawString(t);
+    drawString("RX:");
     print_uint8_t(&buffer);
+    setCharCursor(0, 1);
+    drawString("DMA status:");
+    switch (hspi1.hdmatx->State)
+    {
+    case HAL_DMA_STATE_RESET:
+      drawString("RESET");
+      break;
+
+    case HAL_DMA_STATE_READY:
+      drawString("READY");
+      break;
+
+    case HAL_DMA_STATE_BUSY:
+      drawString("BUSY");
+      break;
+
+    case HAL_DMA_STATE_TIMEOUT:
+      drawString("TIMEOUT");
+      break;
+
+    case HAL_DMA_STATE_ERROR:
+      drawString("ERROR");
+      break;
+
+    case HAL_DMA_STATE_ABORT:
+      drawString("ABORT");
+      break;
+
+    default:
+      break;
+    }
     // HAL_SPI_Receive_IT(&hspi2, &buffer, 1);
     __HAL_GPIO_EXTI_CLEAR_IT(GPIO_Pin);
   }
