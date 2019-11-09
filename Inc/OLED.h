@@ -56,7 +56,7 @@ cursorPos charCursor; // Cursor position(x, y), x ranged from 0 to 20, y ranged 
 #define OLED_CMD 0
 #define OLED_DATA 1
 
-static uint8_t GRAM[1024] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, };
+static uint8_t GRAM[1024] = {};
 
 static uint8_t clearScreen_flag  = 0;
 //SH1106 defines END
@@ -84,6 +84,8 @@ uint8_t get_clearScreen_flag();
 // experimental functions:
 void drawChar_up(char* c, uint8_t reverse);
 void drawString_up(char *s, uint8_t reverse);
+
+uint8_t* get_GRAMaddr();
 
 //SH1106 functions END
 

@@ -349,3 +349,8 @@ void drawString_up(char *s, uint8_t reverse)
     current_char++;
   }
 }
+
+uint8_t* get_GRAMaddr()
+{
+  return GRAM;
+}
