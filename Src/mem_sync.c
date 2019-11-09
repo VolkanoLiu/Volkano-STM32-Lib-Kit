@@ -32,11 +32,14 @@ void sync_mem_TX(memSyncTask_Typedef *memSyncTask)
     break;
 
   case TX_START:
-    SPI_Transmit_TX(m_hspi_addr, memSyncTask->mem_addr, memSyncTask->data_length, 1);
+    SPI_Transmit_TX(m_hspi_addr, memSyncTask->mem_addr, memSyncTask->data_length, memSyncTask);
+    memSyncTask->transfState = TX_BUSY;
     break;
 
   case TX_BUSY:
-    // do nothing
+    if(m_hspi_addr->hdmarx->State != HAL_DMA_STATE_BUSY) {
+      memSyncTask->transfState = TX_FINISH;
+    }
     break;
 
   case TX_FINISH:
@@ -100,7 +103,7 @@ void SPI_Transmit_RX(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size)
   HAL_SPI_Transmit_DMA(hspi, pData, Size);
 }
 
-void set_SPI_Handle(SPI_HandleTypeDef *_addr)
+void memSync_set_SPI_Handle(SPI_HandleTypeDef *_addr)
 {
   m_hspi_addr = _addr;
 }

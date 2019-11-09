@@ -66,6 +66,6 @@ void sync_mem_RX(memSyncTask_Typedef *memSyncTask);
 
 SPI_HandleTypeDef *m_hspi_addr;
 
-void set_SPI_Handle(SPI_HandleTypeDef *_addr);
+void memSync_set_SPI_Handle(SPI_HandleTypeDef *_addr);
 
 #endif

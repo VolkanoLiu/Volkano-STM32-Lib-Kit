@@ -72,6 +72,11 @@ taskList_Typedef backgroundTaskList;
 
 memSyncTask_Typedef memSyncTask;
 
+void send()
+{
+  sync_mem_TX(&memSyncTask);
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -122,29 +127,24 @@ int main(void)
   // HAL_GPIO_WritePin(ROW0_GPIO_Port, ROW0_Pin, GPIO_PIN_RESET);
   taskListInit(&htim6, &foregroundTaskList, foregroundTaskManager);
   taskListInit(&htim6, &backgroundTaskList, backgroundTaskManager);
-
-  #ifndef OLED_USE_DMA
-  
-  SetSPIHandle(&hspi1);
-  Set_DC_GPIO(OLED_DC_GPIO_Port, OLED_DC_Pin);
-  Set_RS_GPIO(OLED_RST_GPIO_Port, OLED_RST_Pin);
-  SH1106_Init();
-  test();
-  
-  #endif
+  memSyncTaskInit(&memSyncTask, SPI, TX, get_GRAMaddr(), 1024, 20);
+  memSync_set_SPI_Handle(&hspi1);
 
   #ifdef OLED_USE_DMA
-  SetSPIHandle(&hspi1);
-  Set_DC_GPIO(OLED_DC_GPIO_Port, OLED_DC_Pin);
-  Set_RS_GPIO(OLED_RST_GPIO_Port, OLED_RST_Pin);
-  SH1106_Init();
+  // SetSPIHandle(&hspi1);
+  // Set_DC_GPIO(OLED_DC_GPIO_Port, OLED_DC_Pin);
+  // Set_RS_GPIO(OLED_RST_GPIO_Port, OLED_RST_Pin);
+  // SH1106_Init();
 
   // firstTest(SingleHit_callback, DoubleHit_callback, row, col);
   // matrixInit(&matrix_key, key, SingleHit_callback, DoubleHit_callback, row, col);
   
-  taskElement_Typedef flushScreen_Task;
+  // taskElement_Typedef flushScreen_Task;
   // taskElement_Typedef scanMatrix_Task;
-  backgroundTaskInit(&flushScreen_Task, &backgroundTaskList, 10, flushScreen);
+  taskElement_Typedef send_Task;
+  backgroundTaskInit(&send_Task, &backgroundTaskList, 10, send);
+  // backgroundTaskInit(&flushScreen_Task, &backgroundTaskList, 10, flushScreen);
+  
   // foregroundTaskInit(&scanMatrix_Task, &foregroundTaskList, 10, scanMatrix);
   // HAL_TIM_Base_Stop_IT(&htim6);
   HAL_TIM_Base_Start_IT(&htim6);
