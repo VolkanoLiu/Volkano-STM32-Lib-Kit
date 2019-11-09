@@ -29,6 +29,7 @@ typedef enum {
   TX_READY,
   RX_READY,
   TX_START,
+  RX_START,
   TX_BUSY,
   RX_BUSY,
   TX_FINISH,
@@ -37,6 +38,8 @@ typedef enum {
 
 typedef struct {
   protocol_Typedef protocol;
+  GPIO_TypeDef *CS_GPIOx;
+  uint16_t CS_GPIO_Pin;
   direction_Typedef direction;
   uint32_t mem_addr;
   uint32_t data_length;

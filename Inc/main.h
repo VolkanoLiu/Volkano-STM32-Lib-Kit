@@ -34,6 +34,7 @@ extern "C" {
 /* USER CODE BEGIN Includes */
 #include "OLED.h"
 #include "taskmanage.h"
+#include "mem_sync.h"
 #include "stdio.h"
 /* USER CODE END Includes */
 

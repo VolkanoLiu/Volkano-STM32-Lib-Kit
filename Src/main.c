@@ -69,6 +69,9 @@ taskList_Typedef backgroundTaskList;
 
 // static void (*SingleHit_callback[4][4])(void);
 // static void (*DoubleHit_callback[4][4])(void);
+
+memSyncTask_Typedef memSyncTask;
+
 /* USER CODE END 0 */
 
 /**
@@ -146,6 +149,8 @@ int main(void)
   // HAL_TIM_Base_Stop_IT(&htim6);
   HAL_TIM_Base_Start_IT(&htim6);
   drawString("SPI RX Test", 0);
+  // SPI mem sync Init;
+  
   
   #endif
   
@@ -222,50 +227,63 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
   if (GPIO_Pin == SPI2_CS1_Pin) {
     if (HAL_GPIO_ReadPin(SPI2_CS1_GPIO_Port, SPI2_CS1_Pin) == 0) {
-      HAL_SPI_Receive_DMA(&hspi2, &buffer, 1);
-      clearScreen();
-      setCharCursor(0, 0);
-      drawString_up(" Volkano's SPI test: ", 1);
-      setCharCursor(0, 1);
-      drawString("RX:", 0);
-      print_uint8_t(&buffer);
-      setCharCursor(0, 2);
-      drawString("DMA status:", 0);
-      switch (hspi2.hdmatx->State) {
-      case HAL_DMA_STATE_RESET:
-        drawString("RESET", 0);
-        break;
-
-      case HAL_DMA_STATE_READY:
-        drawString("READY", 0);
-        break;
-
-      case HAL_DMA_STATE_BUSY:
-        drawString("BUSY", 0);
-        break;
-
-      case HAL_DMA_STATE_TIMEOUT:
-        drawString("TIMEOUT", 0);
-        break;
-
-      case HAL_DMA_STATE_ERROR:
-        drawString("ERROR", 0);
-        break;
-
-      case HAL_DMA_STATE_ABORT:
-        drawString("ABORT", 0);
-        break;
-
-      default:
-        break;
-      }
-      // HAL_SPI_Receive_IT(&hspi2, &buffer, 1);
+      sync_mem_RX(&memSyncTask);
     } else {
       HAL_SPI_DMAStop(&hspi2);
     }
     __HAL_GPIO_EXTI_CLEAR_IT(GPIO_Pin);
   }
 }
+
+// 测试外部中断和SPI接收的回调函数
+// void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+// {
+//   if (GPIO_Pin == SPI2_CS1_Pin) {
+//     if (HAL_GPIO_ReadPin(SPI2_CS1_GPIO_Port, SPI2_CS1_Pin) == 0) {
+//       HAL_SPI_Receive_DMA(&hspi2, &buffer, 1);
+//       clearScreen();
+//       setCharCursor(0, 0);
+//       drawString_up(" Volkano's SPI test: ", 1);
+//       setCharCursor(0, 1);
+//       drawString("RX:", 0);
+//       print_uint8_t(&buffer);
+//       setCharCursor(0, 2);
+//       drawString("DMA status:", 0);
+//       switch (hspi2.hdmatx->State) {
+//       case HAL_DMA_STATE_RESET:
+//         drawString("RESET", 0);
+//         break;
+
+//       case HAL_DMA_STATE_READY:
+//         drawString("READY", 0);
+//         break;
+
+//       case HAL_DMA_STATE_BUSY:
+//         drawString("BUSY", 0);
+//         break;
+
+//       case HAL_DMA_STATE_TIMEOUT:
+//         drawString("TIMEOUT", 0);
+//         break;
+
+//       case HAL_DMA_STATE_ERROR:
+//         drawString("ERROR", 0);
+//         break;
+
+//       case HAL_DMA_STATE_ABORT:
+//         drawString("ABORT", 0);
+//         break;
+
+//       default:
+//         break;
+//       }
+//       // HAL_SPI_Receive_IT(&hspi2, &buffer, 1);
+//     } else {
+//       HAL_SPI_DMAStop(&hspi2);
+//     }
+//     __HAL_GPIO_EXTI_CLEAR_IT(GPIO_Pin);
+//   }
+// }
 
 void HAL_SPI_RxCpltCallback (SPI_HandleTypeDef * hspi)
 {
