@@ -99,8 +99,10 @@ void backgroundTaskManager(taskList_Typedef *taskList)
     }
   }
   if (get_clearScreen_flag()) {
-    clearScreen();
-    reset_clearScreen_flag();
-    drawString(getStr());
+    // key press processing code:
+
+    // clearScreen();
+    // reset_clearScreen_flag();
+    // drawString(getStr());
   }
 }

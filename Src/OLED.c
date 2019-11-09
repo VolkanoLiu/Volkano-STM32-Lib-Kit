@@ -229,10 +229,10 @@ void flushScreen()
   }
 }
 
-void drawChar(char* c)
+void drawChar(char* c, uint8_t reverse)
 {
   for (uint8_t x = 0; x < 6; x++) {
-    GRAM[128 * char_pos.y + 6 * char_pos.x + x] = ascii_8x6[*c - ' '][x];
+    GRAM[128 * char_pos.y + 6 * char_pos.x + x] = reverse ? ~ascii_8x6[*c - ' '][x]: ascii_8x6[*c - ' '][x];
   }
   if (char_pos.x == 20) {
     char_pos.x = 0;
@@ -255,7 +255,7 @@ void print_uint8_t(uint8_t *num)
   num2str[1] = (*num - (num2str[0] - '0') * 100) / 10 + '0';
   num2str[2] = *num - (num2str[0] - '0') * 100 - (num2str[1] - '0') * 10 + '0';
   num2str[3] = '\0';
-  drawString(num2str);
+  drawString(num2str, 0);
 }
 
 void print_uint16_t(uint16_t *num)
@@ -289,15 +289,15 @@ void print_uint16_t(uint16_t *num)
         str[i-1+k-j]=temp;//将临时变量的值(其实就是之前的头部值)赋给尾部
     }
  
-    drawString(str);
+    drawString(str, 0);
 }
 
-void drawString(char *s)
+void drawString(char *s, uint8_t reverse)
 {
   char* current_char = s;
   while(*current_char!='\0')
   {
-    drawChar(current_char);
+    drawChar(current_char, reverse);
     current_char++;
   }
 }
@@ -324,3 +324,28 @@ uint8_t get_clearScreen_flag()
 }
 
 #endif /* OLED_USE_DMA */
+
+
+// experimental functions:
+void drawChar_up(char* c, uint8_t reverse)
+{
+  for (uint8_t x = 0; x < 6; x++) {
+    GRAM[128 * char_pos.y + 6 * char_pos.x + x] = reverse ? ~(ascii_8x6[*c - ' '][x] >> 1): ascii_8x6[*c - ' '][x] >> 1;
+  }
+  if (char_pos.x == 20) {
+    char_pos.x = 0;
+    char_pos.y = char_pos.y == 7 ? 0 : char_pos.y + 1;
+  } else {
+    char_pos.x++;
+  }
+}
+
+void drawString_up(char *s, uint8_t reverse)
+{
+  char* current_char = s;
+  while(*current_char!='\0')
+  {
+    drawChar_up(current_char, reverse);
+    current_char++;
+  }
+}

@@ -71,15 +71,19 @@ void SH1106_WR_Byte(uint8_t dat, uint8_t cmd);
 void SH1106_Init();
 void flushScreen();
 void drawPixel(uint8_t x, uint8_t y);
-void drawChar(char* c);
+void drawChar(char* c, uint8_t reverse);
 void setCharCursor(uint8_t x, uint8_t y);
 void print_uint8_t(uint8_t *num);
 void print_uint16_t(uint16_t *num);
-void drawString(char *s);
+void drawString(char *s, uint8_t reverse);
 void clearScreen();
 void set_clearScreen_flag();
 void reset_clearScreen_flag();
 uint8_t get_clearScreen_flag();
+
+// experimental functions:
+void drawChar_up(char* c, uint8_t reverse);
+void drawString_up(char *s, uint8_t reverse);
 
 //SH1106 functions END
 
