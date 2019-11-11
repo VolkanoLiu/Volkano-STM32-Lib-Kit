@@ -34,7 +34,7 @@ extern "C" {
 /* USER CODE BEGIN Includes */
 #include "OLED.h"
 #include "taskmanage.h"
-#include "mem_sync.h"
+#include "mem_sync/rx.h"
 #include "stdio.h"
 /* USER CODE END Includes */
 
@@ -69,9 +69,8 @@ void Error_Handler(void);
 #define ROW3_GPIO_Port GPIOF
 #define ROW2_Pin GPIO_PIN_5
 #define ROW2_GPIO_Port GPIOF
-#define SPI2_CS1_Pin GPIO_PIN_1
-#define SPI2_CS1_GPIO_Port GPIOC
-#define SPI2_CS1_EXTI_IRQn EXTI1_IRQn
+#define SPI2_CS1_Pin GPIO_PIN_13
+#define SPI2_CS1_GPIO_Port GPIOF
 #define OLED_DC_Pin GPIO_PIN_8
 #define OLED_DC_GPIO_Port GPIOD
 #define OLED_RST_Pin GPIO_PIN_9

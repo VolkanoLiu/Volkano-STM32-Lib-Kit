@@ -70,13 +70,6 @@ taskList_Typedef backgroundTaskList;
 // static void (*SingleHit_callback[4][4])(void);
 // static void (*DoubleHit_callback[4][4])(void);
 
-memSyncTask_Typedef memSyncTask;
-
-void send()
-{
-  sync_mem_TX(&memSyncTask);
-}
-
 /* USER CODE END 0 */
 
 /**
@@ -113,40 +106,23 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
+  MX_GPIO_Init();
   MX_DMA_Init();
   MX_SPI1_Init();
-  MX_SPI2_Init();
-  MX_USART1_Init();
-  MX_GPIO_Init();
   MX_TIM6_Init();
-  
+  MX_USART1_Init();
+  MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
-  // uint8_t a = 0;
-  // HAL_GPIO_WritePin(ROW0_GPIO_Port, ROW0_Pin, GPIO_PIN_SET);
-  // a = HAL_GPIO_ReadPin(COL0_GPIO_Port, COL0_Pin);
-  // HAL_GPIO_WritePin(ROW0_GPIO_Port, ROW0_Pin, GPIO_PIN_RESET);
+
   taskListInit(&htim6, &foregroundTaskList, foregroundTaskManager);
   taskListInit(&htim6, &backgroundTaskList, backgroundTaskManager);
-  memSyncTaskInit(&memSyncTask, SPI, TX, get_GRAMaddr(), 1024, 20);
-  memSync_set_SPI_Handle(&hspi1);
 
   #ifdef OLED_USE_DMA
-  // SetSPIHandle(&hspi1);
-  // Set_DC_GPIO(OLED_DC_GPIO_Port, OLED_DC_Pin);
-  // Set_RS_GPIO(OLED_RST_GPIO_Port, OLED_RST_Pin);
-  // SH1106_Init();
-
-  // firstTest(SingleHit_callback, DoubleHit_callback, row, col);
-  // matrixInit(&matrix_key, key, SingleHit_callback, DoubleHit_callback, row, col);
+  SetSPIHandle(&hspi1);
   
-  // taskElement_Typedef flushScreen_Task;
-  // taskElement_Typedef scanMatrix_Task;
-  taskElement_Typedef send_Task;
-  backgroundTaskInit(&send_Task, &backgroundTaskList, 10, send);
-  // backgroundTaskInit(&flushScreen_Task, &backgroundTaskList, 10, flushScreen);
+  taskElement_Typedef flushScreen_Task;
+  backgroundTaskInit(&flushScreen_Task, &backgroundTaskList, 10, flushScreen);
   
-  // foregroundTaskInit(&scanMatrix_Task, &foregroundTaskList, 10, scanMatrix);
-  // HAL_TIM_Base_Stop_IT(&htim6);
   HAL_TIM_Base_Start_IT(&htim6);
   drawString("SPI RX Test", 0);
   // SPI mem sync Init;
@@ -222,75 +198,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 }
 
 uint8_t buffer;
-
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
-  if (GPIO_Pin == SPI2_CS1_Pin) {
-    if (HAL_GPIO_ReadPin(SPI2_CS1_GPIO_Port, SPI2_CS1_Pin) == 0) {
-      sync_mem_RX(&memSyncTask);
-    } else {
-      HAL_SPI_DMAStop(&hspi2);
-    }
-    __HAL_GPIO_EXTI_CLEAR_IT(GPIO_Pin);
-  }
-}
-
-// 测试外部中断和SPI接收的回调函数
-// void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-// {
-//   if (GPIO_Pin == SPI2_CS1_Pin) {
-//     if (HAL_GPIO_ReadPin(SPI2_CS1_GPIO_Port, SPI2_CS1_Pin) == 0) {
-//       HAL_SPI_Receive_DMA(&hspi2, &buffer, 1);
-//       clearScreen();
-//       setCharCursor(0, 0);
-//       drawString_up(" Volkano's SPI test: ", 1);
-//       setCharCursor(0, 1);
-//       drawString("RX:", 0);
-//       print_uint8_t(&buffer);
-//       setCharCursor(0, 2);
-//       drawString("DMA status:", 0);
-//       switch (hspi2.hdmatx->State) {
-//       case HAL_DMA_STATE_RESET:
-//         drawString("RESET", 0);
-//         break;
-
-//       case HAL_DMA_STATE_READY:
-//         drawString("READY", 0);
-//         break;
-
-//       case HAL_DMA_STATE_BUSY:
-//         drawString("BUSY", 0);
-//         break;
-
-//       case HAL_DMA_STATE_TIMEOUT:
-//         drawString("TIMEOUT", 0);
-//         break;
-
-//       case HAL_DMA_STATE_ERROR:
-//         drawString("ERROR", 0);
-//         break;
-
-//       case HAL_DMA_STATE_ABORT:
-//         drawString("ABORT", 0);
-//         break;
-
-//       default:
-//         break;
-//       }
-//       // HAL_SPI_Receive_IT(&hspi2, &buffer, 1);
-//     } else {
-//       HAL_SPI_DMAStop(&hspi2);
-//     }
-//     __HAL_GPIO_EXTI_CLEAR_IT(GPIO_Pin);
-//   }
-// }
-
-void HAL_SPI_RxCpltCallback (SPI_HandleTypeDef * hspi)
-{
-  // if(hspi == &hspi2) {
-  //     HAL_SPI_Receive_IT(&hspi2, &buffer, 1);
-  // }
-}
 
 /* USER CODE END 4 */
 
