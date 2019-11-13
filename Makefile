@@ -62,6 +62,7 @@ Src/taskmanage.c \
 Src/keypress_process.c \
 Src/matrix_key.c \
 Src/mem_sync/rx.c \
+Src/mem_sync/tx.c \
 Src/gpio.c \
 Src/dma.c \
 Src/spi.c \

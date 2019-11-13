@@ -8,18 +8,17 @@
 
 // variable BEGIN
 
-static uint8_t signal[2] = {0b01100110, 0b01010100};
+static uint8_t rx_signal[2] = {0b01100110, 0b01010100};
 
 // variable END
 
 // typedef BEGIN
 
 typedef enum {
-  FREE = 0,
-  READY,
-  START,
-  BUSY,
-  FINISH
+  RX_FREE = 0,
+  RX_READY,
+  RX_START,
+  RX_BUSY,
 } RX_stateTypedef;
 
 typedef struct {
