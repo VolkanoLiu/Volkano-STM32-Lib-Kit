@@ -30,6 +30,7 @@
 /* USER CODE BEGIN Includes */
 #include "OLED.h"
 #include "matrix_key.h"
+#include "calc.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
