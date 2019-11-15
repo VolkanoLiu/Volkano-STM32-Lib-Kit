@@ -45,7 +45,7 @@ void memSync_RX_taskTypedef_Init(memSync_RX_taskTypedef* memSync_RX_task,
     uint8_t* dataAddress,
     uint32_t size);
 
-void memSync_RX_update(memSync_RX_taskTypedef* memync_RX_task);
+void memSync_RX_update(memSync_RX_taskTypedef* memSync_RX_task);
 
 // functions END
 

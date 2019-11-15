@@ -1,0 +1,54 @@
+{
+
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "name": "ARM Debug",
+            "type": "cppdbg",                                                       
+            "request": "launch",                                                    
+            "program": "${workspaceFolder}/build/SPI_Display.elf",   // 要调试的程序（在下面的参数中指定了，这里的没有意义）
+            "args": [],                                                             
+            "stopAtEntry": false,                                                  
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": true,  
+ // 调试时是否显示控制台窗口
+
+            "MIMode": "gdb",
+            "miDebuggerPath": "arm-none-eabi-gdb",
+ //调试工具原始路径
+
+            "targetArchitecture": "arm",                                            //目标架构，此参数必须要有
+
+            "setupCommands": [                                                      // 进入GDB以后，自动执行的一些配置  
+               {
+                    "description": "选择调试文件(.elf)到gdb",
+                    "text": "file ${workspaceFolder}/build/SPI_Display.elf", //此处不能使用${workspaceFolder}，因为windows下分隔符是'\\'，gdb识别不出来
+                    "ignoreFailures": false
+                },
+                {
+                    "description": "连接GDB Server",
+                    "text": "target remote localhost:3333",                                 
+                    "ignoreFailures": false
+                },
+                {
+                    "description": "Reset MCU",
+                    "text": "monitor reset",                                              
+                    "ignoreFailures": false
+                },
+                {
+                    "description": "Halt",
+                    "text": "monitor halt",                                                  
+                    "ignoreFailures": false
+                },
+                {
+                    "description":"下载代码到MCU",
+                    "text": "load" ,              
+                    "ignoreFailures": false                                      
+                }
+            ],
+            "preLaunchTask": "build",                                           // 在调试前预先执行的任务，此处是tasks.json中的
+        }
+    ]
+}

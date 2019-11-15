@@ -13,4 +13,26 @@ typedef enum {
   TX_BUSY,
 } TX_stateTypedef;
 
+typedef struct {
+  // SPI handle
+  SPI_HandleTypeDef* p_hspi;
+  // DC Pin GPIO
+  GPIO_TypeDef *GPIOx;
+  uint16_t GPIO_Pin;
+  uint8_t* dataAddress;
+  uint32_t size;
+  TX_stateTypedef state;
+  //  当前计数
+  uint8_t count;
+} memSync_TX_taskTypedef;
+
+void memSync_TX_taskTypedef_Init(memSync_TX_taskTypedef* memSync_TX_task,
+    SPI_HandleTypeDef* p_hspi,
+    GPIO_TypeDef *GPIOx,
+    uint16_t GPIO_Pin,
+    uint8_t* dataAddress,
+    uint32_t size);
+
+void memSync_TX_update(memSync_TX_taskTypedef* memSync_TX_task);
+
 #endif
