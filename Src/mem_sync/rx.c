@@ -44,7 +44,7 @@ void memSync_RX_update(memSync_RX_taskTypedef *mS_RX_task)
       break;
 
     case RX_BUSY:
-      if(mS_RX_task->p_hspi->hdmarx->State == HAL_DMA_STATE_READY) {
+      if(!(mS_RX_task->p_hspi->Instance->SR & SPI_SR_RXNE)) {
         mS_RX_task->state = RX_FREE;
       }
       break;
