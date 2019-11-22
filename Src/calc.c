@@ -137,7 +137,7 @@ void calc(char *string)
   data_datatype_Typedef temp_data;
   char *p_string = string;
 
-  uint8_t isFloat_flag = 0;
+  uint8_t pre_isFloat_flag = 0, isFloat_flag = 0;
   char num_buffer[256];
   uint32_t data_integer = 0;
   float data_float = 0;
@@ -155,13 +155,13 @@ void calc(char *string)
           // 不断从stack弹出存入list直到遇到左括号，并删除左括号
           temp_data = stack_pop(&cm);
           list_add_integer(&cm, temp_data.data_integer, temp_data.type);
-        } while (temp_data.data_integer == OP_LEFT && temp_data.type == OP);
+        } while (!(temp_data.data_integer == OP_LEFT && temp_data.type == OP));
         // 删除左括号
         list_del(&cm);
       } else {
         // 如果是普通运算符
-        while(!isStackEmpty(&cm) && op_type_buffer <= cm.mem_stack[cm.stack_tail-1].data_integer) {
-          // 栈非空且当前运算符优先级不高于栈顶，不断弹出，直到当前运算符优先级高于栈顶
+        while(!isStackEmpty(&cm) && (op_type_buffer <= cm.mem_stack[cm.stack_tail-1].data_integer)) {
+          // 栈非空且当前运算符优先级不高于栈顶，不断弹出，直到当前运算符优先级高于栈顶或者遇到左括号
           temp_data = stack_pop(&cm);
           list_add_integer(&cm, temp_data.data_integer, temp_data.type);
         }
@@ -173,13 +173,16 @@ void calc(char *string)
       num_buffer[num_buffer_offset] = *p_string;
       // 如果是小数点，则将isFloat_flag置1
       if(*p_string == '.') {
-        isFloat_flag = 1;
+        pre_isFloat_flag = 1;
       }
       //偏移量自增
       num_buffer_offset++;
       // 如果下一个不是数字（小数点）或者是字符串末尾
-      if(!((*(p_string+1)>='0'&&*(p_string+1)<=9)||*(p_string+1)=='.') ||
-         *(p_string+1) == '\0') {
+      if(!((*(p_string+1)>='0'&&*(p_string+1)<='9')||*(p_string+1)=='.') || *(p_string+1) == '\0') {
+        if (pre_isFloat_flag) {
+          isFloat_flag = 1;
+          pre_isFloat_flag = 0;
+        }
         // 数字缓存数组的偏移量所对应的地方设为'\0'
         num_buffer[num_buffer_offset] = '\0';
         // 如果数字是浮点数
@@ -195,6 +198,7 @@ void calc(char *string)
         num_buffer_offset = 0;
       }
     }
+    p_string++;
   }
   while (!isStackEmpty(&cm)) {
     // 将栈中的运算符依次弹出并加入到队列
