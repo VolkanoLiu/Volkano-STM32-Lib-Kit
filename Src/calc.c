@@ -1,4 +1,19 @@
 #include "calc.h"
+#include "OLED.h"
+#include "matrix_key.h"
+
+void set_calc_finished_flag() {
+  calc_finished_flag = 1;
+}
+
+void reset_calc_finished_flag() {
+  calc_finished_flag = 0;
+}
+
+uint8_t get_calc_finished_flag()
+{
+  return calc_finished_flag;
+}
 
 void calc_Typedef_Init(calc_Typedef *calc)
 {
@@ -16,7 +31,7 @@ uint8_t isStackFull(calc_Typedef *calc)
   return calc->stack_tail == 256;
 }
 
-void stack_push(calc_Typedef *calc, uint32_t data_integer, DATA_TYPE type)
+void stack_push(calc_Typedef *calc, int32_t data_integer, DATA_TYPE type)
 {
   if (!isStackFull(calc)) {
     uint8_t count = (calc->stack_tail);
@@ -27,6 +42,40 @@ void stack_push(calc_Typedef *calc, uint32_t data_integer, DATA_TYPE type)
 }
 
 data_datatype_Typedef stack_pop(calc_Typedef *calc)
+{
+  if(!isStackEmpty(calc)) {
+    uint8_t count = --(calc->stack_tail);
+    return calc->mem_stack[count];
+  } else
+  {
+    data_datatype_Typedef fault_data;
+    fault_data.data_integer = 1;
+    fault_data.type = OP;
+    return fault_data;
+  }
+}
+
+void num_stack_push_integer(calc_Typedef *calc, int data_integer)
+{
+  if (!isStackFull(calc)) {
+    uint8_t count = (calc->stack_tail);
+    calc->mem_stack[count].data_integer = data_integer;
+    calc->mem_stack[count].type = NUM;
+    (calc->stack_tail)++;
+  }
+}
+
+void num_stack_push_double(calc_Typedef *calc, double data_double)
+{
+  if (!isStackFull(calc)) {
+    uint8_t count = (calc->stack_tail);
+    calc->mem_stack[count].data_double = data_double;
+    calc->mem_stack[count].type = FLOAT;
+    (calc->stack_tail)++;
+  }
+}
+
+data_datatype_Typedef num_stack_pop(calc_Typedef *calc)
 {
   if(!isStackEmpty(calc)) {
     uint8_t count = --(calc->stack_tail);
@@ -56,15 +105,17 @@ void list_add_integer(calc_Typedef *calc, int32_t data_integer, DATA_TYPE type)
     uint8_t count = (calc->list_tail);
     calc->mem_list[count].data_integer = data_integer;
     calc->mem_list[count].type = type;
+    calc->list_tail++;
   }
 }
 
-void list_add_float(calc_Typedef *calc, float data_float)
+void list_add_double(calc_Typedef *calc, double data_double)
 {
   if (!isListFull(calc)) {
     uint8_t count = (calc->list_tail);
-    calc->mem_list[count].data_float = data_float;
+    calc->mem_list[count].data_double = data_double;
     calc->mem_list[count].type = FLOAT;
+    calc->list_tail++;
   }
 }
 
@@ -133,14 +184,15 @@ uint32_t isNum(char *p_c)
 void calc(char *string)
 {
   calc_Typedef cm;
+  calc_Typedef_Init(&cm);
   int32_t op_type_buffer;
   data_datatype_Typedef temp_data;
   char *p_string = string;
 
   uint8_t pre_isFloat_flag = 0, isFloat_flag = 0;
   char num_buffer[256];
-  uint32_t data_integer = 0;
-  float data_float = 0;
+  int32_t data_integer = 0;
+  double data_double = 0;
   uint8_t num_buffer_offset = 0;
 
   while (*p_string != '\0') {
@@ -187,8 +239,8 @@ void calc(char *string)
         num_buffer[num_buffer_offset] = '\0';
         // 如果数字是浮点数
         if(isFloat_flag) {
-          data_float = atof(num_buffer);
-          list_add_float(&cm, data_float);
+          data_double = atof(num_buffer);
+          list_add_double(&cm, data_double);
         } else {    // 如果是整型数
           data_integer = atoi(num_buffer);
           list_add_integer(&cm, data_integer, NUM);
@@ -205,4 +257,69 @@ void calc(char *string)
     temp_data = stack_pop(&cm);
     list_add_integer(&cm, temp_data.data_integer, temp_data.type);
   }
+  // 在列表依次扫描
+  // 如果是数字，直接入栈
+  // 如果是运算符，弹出两个数字，进行运算
+  uint8_t list_offset = 0;
+  calc_Typedef cc;
+  calc_Typedef_Init(&cc);
+  double temp_result_double ;
+  uint8_t cc_stack_tail;
+
+#define GET_NUM(x) cc.mem_stack[cc_stack_tail - x].type == NUM ? cc.mem_stack[cc_stack_tail - x].data_integer : cc.mem_stack[cc_stack_tail - x].data_double
+#define OP_CALC(OP)                                \
+  temp_result_double = (GET_NUM(2))OP(GET_NUM(1)); \
+  num_stack_pop(&cc);                              \
+  num_stack_pop(&cc);                              \
+  num_stack_push_double(&cc, temp_result_double);
+
+  for (; list_offset < cm.list_tail; list_offset++) {
+    switch (cm.mem_list[list_offset].type)
+    {
+    case NUM:
+      num_stack_push_integer(&cc, cm.mem_list[list_offset].data_integer);
+      break;
+
+    case FLOAT:
+      num_stack_push_double(&cc, cm.mem_list[list_offset].data_double);
+      break;
+
+    case OP:
+      cc_stack_tail = cc.stack_tail;
+      // if(cc.mem_stack[cc_stack_tail - 1].type == NUM && cc.mem_stack[cc_stack_tail - 2].type == NUM)
+      switch (cm.mem_list[list_offset].data_integer)
+      {
+      case OP_PLUS:
+        OP_CALC(+);
+        break;
+
+      case OP_MINUS:
+        OP_CALC(-);
+        break;
+
+      case OP_TIMES:
+        OP_CALC(*);
+        break;
+
+      case OP_DIVIDE:
+        OP_CALC(/);
+        break;
+      
+      default:
+        break;
+      }
+      break;
+    
+    default:
+      break;
+    }
+  }
+  int32_t temp = temp_result_double * 1000000;
+  int32_t ld1 = temp/1000000, ld2 = temp%1000000;
+  clearScreen();
+  setCharCursor(0, 0);
+  sprintf(getStr(), "%f", temp_result_double);
+  set_calc_finished_flag();
+  set_clearScreen_flag();
+  return;
 }

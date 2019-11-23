@@ -5,6 +5,11 @@
 #include "stdio.h"
 #include "stdlib.h"
 
+uint8_t calc_finished_flag;
+void set_calc_finished_flag();
+void reset_calc_finished_flag();
+uint8_t get_calc_finished_flag();
+
 // 数据的类型：数字还是运算符
 typedef enum {
   NUM= 0,
@@ -25,7 +30,7 @@ typedef enum {
 // 数据和数据类型结构体定义
 typedef struct {
   int32_t data_integer;
-  float data_float;
+  float data_double;
   DATA_TYPE type;
 } data_datatype_Typedef;
 
@@ -41,13 +46,13 @@ void calc_Typedef_Init(calc_Typedef *calc);
 
 uint8_t isStackEmpty(calc_Typedef *calc);
 uint8_t isStackFull(calc_Typedef *calc);
-void stack_push(calc_Typedef *calc, uint32_t data_integer, DATA_TYPE type);
+void stack_push(calc_Typedef *calc, int32_t data_integer, DATA_TYPE type);
 data_datatype_Typedef stack_pop(calc_Typedef *calc);
 
 uint8_t isListEmpty(calc_Typedef *calc);
 uint8_t isListFull(calc_Typedef *calc);
 void list_add_integer(calc_Typedef *calc, int32_t data_integer, DATA_TYPE type);
-void list_add_float(calc_Typedef *calc, float data_float);
+void list_add_double(calc_Typedef *calc, double data_double);
 void list_del(calc_Typedef *calc);
 
 uint32_t isOperator(char *p_c);

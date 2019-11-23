@@ -32,10 +32,11 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "OLED.h"
 #include "taskmanage.h"
-#include "mem_sync/rx.h"
-#include "mem_sync/tx.h"
+#include "OLED.h"
+#include "keypress_process.h"
+#include "matrix_key.h"
+#include "calc.h"
 #include "stdio.h"
 /* USER CODE END Includes */
 

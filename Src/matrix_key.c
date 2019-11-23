@@ -1,6 +1,7 @@
 #include "matrix_key.h"
 #include "main.h"
 #include "usart.h"
+#include "calc.h"
 
 /**
   * @brief 初始化矩阵键盘
@@ -82,44 +83,96 @@ void delChar()
   }
 }
 
-void print1(){
+void print_1(){
   addChar('1');
-}
-void print2(){
-  addChar('2');
-}
-void print3(){
-  addChar('3');
-}
-void print4(){
-  addChar('4');
-}
-void print5(){
-  addChar('5');
-}
-void print6(){
-  addChar('6');
-}
-void print7(){
-  addChar('7');
-}
-void print8(){
-  addChar('8');
-}
-void print9(){
-  addChar('9');
-}
-void print0(){
-  addChar('0');
-}
-void yes(){
-  char LF[3] = "\r\n";
-  HAL_USART_Transmit(&husart1, &LF, 3, 100);
-  HAL_USART_Transmit(&husart1, str, string_tail, 100);
   set_clearScreen_flag();
 }
-void no(){
-  delChar();
+void print_2(){
+  addChar('2');
+  set_clearScreen_flag();
+}
+void print_3(){
+  addChar('3');
+  set_clearScreen_flag();
+}
+void print_4(){
+  addChar('4');
+  set_clearScreen_flag();
+}
+void print_5(){
+  addChar('5');
+  set_clearScreen_flag();
+}
+void print_6(){
+  addChar('6');
+  set_clearScreen_flag();
+}
+void print_7(){
+  addChar('7');
+  set_clearScreen_flag();
+}
+void print_8(){
+  addChar('8');
+  set_clearScreen_flag();
+}
+void print_9(){
+  addChar('9');
+  set_clearScreen_flag();
+}
+void print_0(){
+  addChar('0');
+  set_clearScreen_flag();
+}
+void print_plus(){
+  if (str[string_tail - 1] != '?') {
+    addChar('+');
+  } else {
+    str[string_tail - 1] = '(';
+  }
+  set_clearScreen_flag();
+}
+void print_minus(){
+  if (str[string_tail - 1] != '?') {
+    addChar('-');
+  } else {
+    str[string_tail - 1] = ')';
+  }
+  set_clearScreen_flag();
+}
+void print_times(){
+  if (str[string_tail - 1] != '?') {
+    addChar('*');
+  } else {
+    str[string_tail - 1] = '.';
+  }
+  set_clearScreen_flag();
+}
+void print_divide(){
+  addChar('/');
+  set_clearScreen_flag();
+}
+void equal()
+{
+  if (get_calc_finished_flag()) {
+    *getStr() = '\0';
+    string_tail = 0;
+    set_clearScreen_flag();
+    reset_calc_finished_flag();
+  } else {
+    calc(&str);
+    set_clearScreen_flag();
+  }
+}
+void print_shift(){
+  if (str[string_tail - 1] != '?') {
+    addChar('?');
+  } else {
+    if(string_tail > 1) {
+      str[string_tail - 2] = '\0';
+      string_tail = string_tail - 2;
+    }
+  }
+  set_clearScreen_flag();
 }
 
 void firstTest(void (*SingleHit_callback[4][4])(void),
@@ -127,18 +180,22 @@ void firstTest(void (*SingleHit_callback[4][4])(void),
     GPIO_struct_Typedef row[4],
     GPIO_struct_Typedef col[4])
 {
-  SingleHit_callback[0][0]=print1;
-  SingleHit_callback[0][1]=print2;
-  SingleHit_callback[0][2]=print3;
-  SingleHit_callback[1][0]=print4;
-  SingleHit_callback[1][1]=print5;
-  SingleHit_callback[1][2]=print6;
-  SingleHit_callback[2][0]=print7;
-  SingleHit_callback[2][1]=print8;
-  SingleHit_callback[2][2]=print9;
-  SingleHit_callback[3][0]=yes;
-  SingleHit_callback[3][1]=print0;
-  SingleHit_callback[3][2]=no;
+  SingleHit_callback[0][0]=print_1;
+  SingleHit_callback[0][1]=print_2;
+  SingleHit_callback[0][2]=print_3;
+  SingleHit_callback[0][3]=print_plus;
+  SingleHit_callback[1][0]=print_4;
+  SingleHit_callback[1][1]=print_5;
+  SingleHit_callback[1][2]=print_6;
+  SingleHit_callback[1][3]=print_minus;
+  SingleHit_callback[2][0]=print_7;
+  SingleHit_callback[2][1]=print_8;
+  SingleHit_callback[2][2]=print_9;
+  SingleHit_callback[2][3]=print_times;
+  SingleHit_callback[3][0]=equal;
+  SingleHit_callback[3][1]=print_0;
+  SingleHit_callback[3][2]=print_shift;
+  SingleHit_callback[3][3]=print_divide;
   row[0].GPIOx=ROW0_GPIO_Port;row[0].GPIO_Pin=ROW0_Pin;
   row[1].GPIOx=ROW1_GPIO_Port;row[1].GPIO_Pin=ROW1_Pin;
   row[2].GPIOx=ROW2_GPIO_Port;row[2].GPIO_Pin=ROW2_Pin;

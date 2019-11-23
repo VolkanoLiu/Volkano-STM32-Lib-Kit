@@ -28,9 +28,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "OLED.h"
-#include "matrix_key.h"
-#include "calc.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -66,10 +64,10 @@ void SystemClock_Config(void);
 taskList_Typedef foregroundTaskList;
 taskList_Typedef backgroundTaskList;
 
-// FSMKey_Typedef key[4][4];
+FSMKey_Typedef key[4][4];
 
-// static void (*SingleHit_callback[4][4])(void);
-// static void (*DoubleHit_callback[4][4])(void);
+static void (*SingleHit_callback[4][4])(void);
+static void (*DoubleHit_callback[4][4])(void);
 
 /* USER CODE END 0 */
 
@@ -81,10 +79,10 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 
-  // FSMKey_Typedef key[4][4];
+  FSMKey_Typedef key[4][4];
 
-  // GPIO_struct_Typedef row[4];
-  // GPIO_struct_Typedef col[4];
+  GPIO_struct_Typedef row[4];
+  GPIO_struct_Typedef col[4];
 
   
   /* USER CODE END 1 */
@@ -120,12 +118,21 @@ int main(void)
 
   #ifdef OLED_USE_DMA
   SetSPIHandle(&hspi1);
-  
+  Set_DC_GPIO(OLED_DC_GPIO_Port, OLED_DC_Pin);
+  Set_RS_GPIO(OLED_RST_GPIO_Port, OLED_RST_Pin);
+  SH1106_Init();
   taskElement_Typedef flushScreen_Task;
   backgroundTaskInit(&flushScreen_Task, &backgroundTaskList, 10, flushScreen);
   
+  firstTest(SingleHit_callback, DoubleHit_callback, row, col);
+  matrixInit(&matrix_key, key, SingleHit_callback, DoubleHit_callback, row, col);
+  
+  taskElement_Typedef scanMatrix_Task;
+  backgroundTaskInit(&flushScreen_Task, &backgroundTaskList, 20, flushScreen);
+  foregroundTaskInit(&scanMatrix_Task, &foregroundTaskList, 10, scanMatrix);
+
   HAL_TIM_Base_Start_IT(&htim6);
-  drawString("SPI RX Test", 0);
+  drawString("Calc Test", 0);
   // SPI mem sync Init;
   
   
