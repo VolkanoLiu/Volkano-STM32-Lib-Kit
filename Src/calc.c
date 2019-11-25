@@ -196,32 +196,10 @@ void calc(char *string)
   uint8_t num_buffer_offset = 0;
 
   while (*p_string != '\0') {
-    if(op_type_buffer = isOperator(p_string)) {
-      // 如果是运算符
-      if(op_type_buffer == OP_LEFT) {
-        // 如果是左括号，直接入栈
-        stack_push(&cm, op_type_buffer, OP);
-      } else if(op_type_buffer == OP_RIGHT) {
-        // 如果是右括号
-        do {
-          // 不断从stack弹出存入list直到遇到左括号，并删除左括号
-          temp_data = stack_pop(&cm);
-          list_add_integer(&cm, temp_data.data_integer, temp_data.type);
-        } while (!(temp_data.data_integer == OP_LEFT && temp_data.type == OP));
-        // 删除左括号
-        list_del(&cm);
-      } else {
-        // 如果是普通运算符
-        while(!isStackEmpty(&cm) && (op_type_buffer <= cm.mem_stack[cm.stack_tail-1].data_integer)) {
-          // 栈非空且当前运算符优先级不高于栈顶，不断弹出，直到当前运算符优先级高于栈顶或者遇到左括号
-          temp_data = stack_pop(&cm);
-          list_add_integer(&cm, temp_data.data_integer, temp_data.type);
-        }
-      // 再将当前运算符压入栈中
-      stack_push(&cm, op_type_buffer, OP);
-      }
-    } else {
+    if(!(op_type_buffer = isOperator(p_string)) || ((op_type_buffer == OP_MINUS && ((!(cm.list_tail) && !(cm.stack_tail)) || isOperator(p_string - 1))) && !isOperator(p_string + 1)))
+    {
       // 如果是数字或者小数点，将当前数字存储到数字缓存数组的偏移量所对应的地方
+      // 如果是负号且负号前不是数字或者负号在字符串头，则接下来的数字是负数
       num_buffer[num_buffer_offset] = *p_string;
       // 如果是小数点，则将isFloat_flag置1
       if(*p_string == '.') {
@@ -248,6 +226,32 @@ void calc(char *string)
         // 重置偏移量和flag
         isFloat_flag = 0;
         num_buffer_offset = 0;
+      }
+    }
+    else
+    {
+      // 如果是运算符
+      if(op_type_buffer == OP_LEFT) {
+        // 如果是左括号，直接入栈
+        stack_push(&cm, op_type_buffer, OP);
+      } else if(op_type_buffer == OP_RIGHT) {
+        // 如果是右括号
+        do {
+          // 不断从stack弹出存入list直到遇到左括号，并删除左括号
+          temp_data = stack_pop(&cm);
+          list_add_integer(&cm, temp_data.data_integer, temp_data.type);
+        } while (!(temp_data.data_integer == OP_LEFT && temp_data.type == OP));
+        // 删除左括号
+        list_del(&cm);
+      } else {
+        // 如果是普通运算符
+        while(!isStackEmpty(&cm) && (op_type_buffer <= cm.mem_stack[cm.stack_tail-1].data_integer)) {
+          // 栈非空且当前运算符优先级不高于栈顶，不断弹出，直到当前运算符优先级高于栈顶或者遇到左括号
+          temp_data = stack_pop(&cm);
+          list_add_integer(&cm, temp_data.data_integer, temp_data.type);
+        }
+      // 再将当前运算符压入栈中
+      stack_push(&cm, op_type_buffer, OP);
       }
     }
     p_string++;
