@@ -52,6 +52,7 @@ Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c \
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_usart.c \
 Src/system_stm32f4xx.c \
 Src/main.c \
 Src/stm32f4xx_it.c \
@@ -69,8 +70,7 @@ Src/dma.c \
 Src/spi.c \
 Src/sys.c \
 Src/tim.c \
-Src/usart.c \
-Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_usart.c
+Src/usart.c
 
 # ASM sources
 ASM_SOURCES =  \
@@ -131,7 +131,8 @@ C_INCLUDES =  \
 -IDrivers/CMSIS/Include \
 -IDrivers/STM32F4xx_HAL_Driver/Inc \
 -IDrivers/STM32F4xx_HAL_Driver/Inc/Legacy \
--IDrivers/CMSIS/Device/ST/STM32F4xx/Include
+-IDrivers/CMSIS/Device/ST/STM32F4xx/Include \
+-IDrivers/CMSIS/DSP/Include
 
 
 # compile gcc flags

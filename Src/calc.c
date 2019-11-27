@@ -2,6 +2,12 @@
 #include "OLED.h"
 #include "matrix_key.h"
 
+#define PUSH_ADD(STRUCT_TYPE, DATA_TYPE, TYPE)                        \
+  unsigned short count = (calc->STRUCT_TYPE##_tail);                  \
+  calc->mem_##STRUCT_TYPE[count].data_##DATA_TYPE = data_##DATA_TYPE; \
+  calc->mem_##STRUCT_TYPE[count].type = TYPE;                         \
+  (calc->STRUCT_TYPE##_tail)++
+
 void set_calc_finished_flag() {
   calc_finished_flag = 1;
 }
@@ -34,10 +40,7 @@ uint8_t isStackFull(calc_Typedef *calc)
 void stack_push(calc_Typedef *calc, int32_t data_integer, DATA_TYPE type)
 {
   if (!isStackFull(calc)) {
-    uint8_t count = (calc->stack_tail);
-    calc->mem_stack[count].data_integer = data_integer;
-    calc->mem_stack[count].type = type;
-    (calc->stack_tail)++;
+    PUSH_ADD(stack, integer, type);
   }
 }
 
@@ -58,20 +61,14 @@ data_datatype_Typedef stack_pop(calc_Typedef *calc)
 void num_stack_push_integer(calc_Typedef *calc, int data_integer)
 {
   if (!isStackFull(calc)) {
-    uint8_t count = (calc->stack_tail);
-    calc->mem_stack[count].data_integer = data_integer;
-    calc->mem_stack[count].type = NUM;
-    (calc->stack_tail)++;
+    PUSH_ADD(stack, integer, NUM);
   }
 }
 
-void num_stack_push_double(calc_Typedef *calc, double data_double)
+void num_stack_push_double(calc_Typedef *calc, float64_t data_double)
 {
   if (!isStackFull(calc)) {
-    uint8_t count = (calc->stack_tail);
-    calc->mem_stack[count].data_double = data_double;
-    calc->mem_stack[count].type = FLOAT;
-    (calc->stack_tail)++;
+    PUSH_ADD(stack, double, FLOAT64);
   }
 }
 
@@ -102,20 +99,14 @@ uint8_t isListFull(calc_Typedef *calc)
 void list_add_integer(calc_Typedef *calc, int32_t data_integer, DATA_TYPE type)
 {
   if (!isListFull(calc)) {
-    uint8_t count = (calc->list_tail);
-    calc->mem_list[count].data_integer = data_integer;
-    calc->mem_list[count].type = type;
-    calc->list_tail++;
+    PUSH_ADD(list, integer, type);
   }
 }
 
-void list_add_double(calc_Typedef *calc, double data_double)
+void list_add_double(calc_Typedef *calc, float64_t data_double)
 {
   if (!isListFull(calc)) {
-    uint8_t count = (calc->list_tail);
-    calc->mem_list[count].data_double = data_double;
-    calc->mem_list[count].type = FLOAT;
-    calc->list_tail++;
+    PUSH_ADD(list, double, FLOAT64);
   }
 }
 
@@ -192,7 +183,7 @@ void calc(char *string)
   uint8_t pre_isFloat_flag = 0, isFloat_flag = 0;
   char num_buffer[256];
   int32_t data_integer = 0;
-  double data_double = 0;
+  float64_t data_double = 0;
   uint8_t num_buffer_offset = 0;
 
   while (*p_string != '\0') {
@@ -267,7 +258,7 @@ void calc(char *string)
   uint8_t list_offset = 0;
   calc_Typedef cc;
   calc_Typedef_Init(&cc);
-  double temp_result_double ;
+  float64_t temp_result_double ;
   uint8_t cc_stack_tail;
 
 #define GET_NUM(x) cc.mem_stack[cc_stack_tail - x].type == NUM ? cc.mem_stack[cc_stack_tail - x].data_integer : cc.mem_stack[cc_stack_tail - x].data_double
@@ -284,7 +275,7 @@ void calc(char *string)
       num_stack_push_integer(&cc, cm.mem_list[list_offset].data_integer);
       break;
 
-    case FLOAT:
+    case FLOAT64:
       num_stack_push_double(&cc, cm.mem_list[list_offset].data_double);
       break;
 
