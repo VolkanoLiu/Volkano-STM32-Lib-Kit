@@ -75,6 +75,7 @@ void SH1106_Init()
   static uint8_t CURRENT_PAGE = 0;
   static uint8_t ADDRESS[3];
 
+// 刷新屏幕函数，不可在中断中调用
 void flushScreen()
 {
   for (uint8_t page = 0; page < 8; page++) {
@@ -84,6 +85,20 @@ void flushScreen()
     OLED_SPI_Transmit_DMA(hspi_addr, &GRAM[0 + 128 * page], 128, OLED_DATA);
     HAL_Delay(1);
   }
+}
+
+// color: 0->black, 1->white
+void drawPixel(uint8_t x, uint8_t y, uint8_t color)
+{
+#define BYTE GRAM[x + (uint8_t)(y / 8) * 128]
+  if ((x >= 0 && x < 128) && (y >= 0 && y < 64)) {
+    if (color) {
+      BYTE |= 1 << (y % 8);
+    } else {
+      BYTE = ~(~BYTE | 1 << (y % 8));
+    }
+  }
+#undef BYTE
 }
 
 void drawChar(char* c, uint8_t reverse)
@@ -103,50 +118,6 @@ void setCharCursor(uint8_t x, uint8_t y)
 {
   char_pos.x = x;
   char_pos.y = y;
-}
-
-void print_uint8_t(uint8_t *num)
-{
-  char num2str[4];
-  num2str[0] = *num / 100 + '0';
-  num2str[1] = (*num - (num2str[0] - '0') * 100) / 10 + '0';
-  num2str[2] = *num - (num2str[0] - '0') * 100 - (num2str[1] - '0') * 10 + '0';
-  num2str[3] = '\0';
-  drawString(num2str, 0);
-}
-
-void print_uint16_t(uint16_t *num)
-{
-  char index[]="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";//索引表
-  char str[6];
-    unsigned unum;//存放要转换的整数的绝对值,转换的整数可能是负数
-    int i=0,j,k;//i用来指示设置字符串相应位，转换之后i其实就是字符串的长度；转换后顺序是逆序的，有正负的情况，k用来指示调整顺序的开始位置;j用来指示调整顺序时的交换。
- 
-    //获取要转换的整数的绝对值
-    unum=(unsigned)num;//若是num为正，直接赋值给unum
- 
-    //转换部分，注意转换后是逆序的
-    do
-    {
-        str[i++]=index[unum%10];//取unum的最后一位，并设置为str对应位，指示索引加1
-        unum/=10;//unum去掉最后一位
- 
-    }while(unum);//直至unum为0退出循环
- 
-    str[i]='\0';//在字符串最后添加'\0'字符，c语言字符串以'\0'结束。
- 
-    //将顺序调整过来
-    k=0;//不是负数，全部都要调整
- 
-    char temp;//临时变量，交换两个值时用到
-    for(j=k;j<=(i-1)/2;j++)//头尾一一对称交换，i其实就是字符串的长度，索引最大值比长度少1
-    {
-        temp=str[j];//头部赋值给临时变量
-        str[j]=str[i-1+k-j];//尾部赋值给头部
-        str[i-1+k-j]=temp;//将临时变量的值(其实就是之前的头部值)赋给尾部
-    }
- 
-    drawString(str, 0);
 }
 
 void drawString(char *s, uint8_t reverse)
@@ -207,4 +178,52 @@ void drawString_up(char *s, uint8_t reverse)
 uint8_t* get_GRAMaddr()
 {
   return GRAM;
+}
+
+// function to be removed:
+// 以下函数已被sprintf替代
+// Makefile 的 LDFLAGS 中需要加入-u _printf_float才能在sprintf中输出浮点数
+
+void draw_uint8_t(uint8_t *num)
+{
+  char num2str[4];
+  num2str[0] = *num / 100 + '0';
+  num2str[1] = (*num - (num2str[0] - '0') * 100) / 10 + '0';
+  num2str[2] = *num - (num2str[0] - '0') * 100 - (num2str[1] - '0') * 10 + '0';
+  num2str[3] = '\0';
+  drawString(num2str, 0);
+}
+
+void draw_uint16_t(uint16_t *num)
+{
+  char index[]="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";//索引表
+  char str[6];
+    unsigned unum;//存放要转换的整数的绝对值,转换的整数可能是负数
+    int i=0,j,k;//i用来指示设置字符串相应位，转换之后i其实就是字符串的长度；转换后顺序是逆序的，有正负的情况，k用来指示调整顺序的开始位置;j用来指示调整顺序时的交换。
+ 
+    //获取要转换的整数的绝对值
+    unum=(unsigned)num;//若是num为正，直接赋值给unum
+ 
+    //转换部分，注意转换后是逆序的
+    do
+    {
+        str[i++]=index[unum%10];//取unum的最后一位，并设置为str对应位，指示索引加1
+        unum/=10;//unum去掉最后一位
+ 
+    }while(unum);//直至unum为0退出循环
+ 
+    str[i]='\0';//在字符串最后添加'\0'字符，c语言字符串以'\0'结束。
+ 
+    //将顺序调整过来
+    k=0;//不是负数，全部都要调整
+ 
+    char temp;//临时变量，交换两个值时用到
+    for(j=k;j<=(i-1)/2;j++)//头尾一一对称交换，i其实就是字符串的长度，索引最大值比长度少1
+    {
+        temp=str[j];//头部赋值给临时变量
+        str[j]=str[i-1+k-j];//尾部赋值给头部
+        str[i-1+k-j]=temp;//将临时变量的值(其实就是之前的头部值)赋给尾部
+    }
+ 
+    drawString(str, 0);
 }

@@ -24,9 +24,6 @@ typedef enum {
 typedef struct {
   // SPI handle
   SPI_HandleTypeDef* p_hspi;
-  // DC Pin GPIO
-  GPIO_TypeDef *GPIOx;
-  uint16_t GPIO_Pin;
   uint8_t* dataAddress;
   uint32_t size;
   uint8_t RX_buffer;
@@ -40,8 +37,6 @@ typedef struct {
 
 void memSync_RX_taskTypedef_Init(memSync_RX_taskTypedef* memSync_RX_task,
     SPI_HandleTypeDef* p_hspi,
-    GPIO_TypeDef *GPIOx,
-    uint16_t GPIO_Pin,
     uint8_t* dataAddress,
     uint32_t size);
 
